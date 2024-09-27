@@ -23,48 +23,24 @@ class InjectionPointsExample {
 
         Function<String, String> filter = Function.identity();
 
-        /**
-         * Set the filter.
-         *
-         * @param filter filter
-         * @return this instance
-         */
         Greeter filter(Function<String, String> filter) {
             this.filter = filter;
             return this;
         }
 
-        /**
-         * Produce a greeting.
-         *
-         * @param prefix prefix
-         * @param name   name
-         * @return greeting
-         */
         String greet(String prefix, String name) {
             return filter.apply("%s: Hello %s!".formatted(prefix, name));
         }
     }
 
     /**
-     * A greeting to be implemented by all variations.
+     * A contract to be implemented by all variations.
      */
     @Service.Contract
     interface Greeting {
 
-        /**
-         * Get the greeter.
-         *
-         * @return greeter
-         */
         Greeter greeter();
 
-        /**
-         * Greet someone.
-         *
-         * @param name name
-         * @return greeting
-         */
         default String greet(String name) {
             return greeter().greet(getClass().getSimpleName(), name);
         }
@@ -90,7 +66,7 @@ class InjectionPointsExample {
     }
 
     /**
-     * A service multiple constructors that uses constructor injection.
+     * A service that uses constructor injection and that has multiple constructors.
      * {@link Injection.Inject} is required.
      */
     @Injection.Singleton
@@ -258,7 +234,7 @@ class InjectionPointsExample {
     }
 
     /**
-     * A service with a cyclic dependency that broken-up using a {@link Supplier}.
+     * A service with a cyclic dependency that is broken-up using a {@link Supplier}.
      *
      * @param dependency dependency
      */

@@ -67,7 +67,7 @@ class CustomScopeExample {
     }
 
     /**
-     * A greeting that uses the custom scope.
+     * A contract that uses the custom scope.
      */
     @MyScope
     @Injection.Instance

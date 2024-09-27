@@ -12,7 +12,7 @@ import io.helidon.service.inject.api.Lookup;
 import io.helidon.service.registry.Service;
 
 /**
- * A service that illustrates {@link Injection.RunLevel}
+ * A example that illustrates {@link Injection.RunLevel}
  */
 class RunLevelExample {
 

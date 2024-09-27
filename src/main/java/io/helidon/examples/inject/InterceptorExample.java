@@ -62,7 +62,7 @@ class InterceptorExample {
     }
 
     /**
-     * A greeting with an intercepted method.
+     * A contract with an intercepted method.
      */
     @Service.Contract
     interface MyIFaceContract {
@@ -84,7 +84,7 @@ class InterceptorExample {
     }
 
     /**
-     * A greeting that is intercepted by delegation.
+     * A contract that is intercepted by delegation.
      */
     @Interception.Delegate
     @Service.Contract
@@ -107,7 +107,7 @@ class InterceptorExample {
     }
 
     /**
-     * Another greeting with methods intercepted by delegation.
+     * Another contract with methods intercepted by delegation.
      */
     @Interception.Delegate
     @Service.Contract

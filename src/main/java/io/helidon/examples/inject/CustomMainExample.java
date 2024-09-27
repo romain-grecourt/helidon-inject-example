@@ -13,7 +13,7 @@ import io.helidon.service.registry.Service;
 class CustomMainExample extends InjectionMain {
 
     /**
-     * A described greeting to justify the usage of {@link #serviceDescriptors(InjectConfig.Builder)},
+     * A described contract to justify the usage of {@link #serviceDescriptors(InjectConfig.Builder)},
      */
     @Injection.Describe
     @Service.Contract
