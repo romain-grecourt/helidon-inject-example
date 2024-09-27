@@ -11,7 +11,7 @@ import io.helidon.service.registry.Service;
 class DescribeExample {
 
     /**
-     * A contract that needs to be described separately.
+     * A service that needs to be described separately.
      */
     @Injection.Describe
     @Service.Contract

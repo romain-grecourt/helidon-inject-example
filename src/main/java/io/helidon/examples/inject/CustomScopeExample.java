@@ -9,8 +9,6 @@ import io.helidon.common.types.TypeName;
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.InjectRegistrySpi;
 import io.helidon.service.inject.api.Injection;
-import io.helidon.service.inject.api.Lookup;
-import io.helidon.service.inject.api.Qualifier;
 import io.helidon.service.inject.api.Scope;
 import io.helidon.service.inject.api.ScopedRegistry;
 import io.helidon.service.registry.ServiceInfo;
@@ -67,11 +65,11 @@ class CustomScopeExample {
     }
 
     /**
-     * A contract that uses the custom scope.
+     * A service in the custom scope.
      */
     @MyScope
     @Injection.Instance
-    static class MyContract {
+    static class MyScopedService {
 
         String sayHello() {
             return "Hello World!";
@@ -81,22 +79,18 @@ class CustomScopeExample {
     /**
      * A singleton service that consumes a service in the custom scope.
      *
-     * @param contract greeting supplier
+     * @param scopedService scoped service
      */
     @Injection.Singleton
-    record MyService(Supplier<MyContract> contract) {
+    record MyService(Supplier<MyScopedService> scopedService) {
     }
 
     public static void main(String[] args) {
         var registry = InjectRegistryManager.create().registry();
         var myService = registry.get(MyService.class);
-        MyScopeControl scopeControl = registry.get(Lookup.builder()
-                .addContract(MyScopeControl.class)
-                .addQualifier(Qualifier.createNamed(MyScope.class))
-                .build());
-
+        MyScopeControl scopeControl = registry.get(MyScopeControl.class);
         try (Scope ignored = scopeControl.start("my-scope-1", Map.of())) {
-            System.out.println(myService.contract.get().sayHello());
+            System.out.println(myService.scopedService.get().sayHello());
         }
     }
 }

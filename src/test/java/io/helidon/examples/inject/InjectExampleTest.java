@@ -130,7 +130,7 @@ class InjectExampleTest {
         var scopeControl = registry.get(CustomScopeExample.MyScopeControl.class);
 
         try (Scope ignored = scopeControl.start("test-1", Map.of())) {
-            assertThat(myService.contract().get().sayHello(), is("Hello World!"));
+            assertThat(myService.scopedService().get().sayHello(), is("Hello World!"));
         }
     }
 

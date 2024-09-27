@@ -10,7 +10,7 @@ import io.helidon.service.registry.Service;
 class CustomQualifierExample {
 
     /**
-     * A contract to be implemented by qualified services.
+     * A service to be implemented by qualified services.
      */
     @Service.Contract
     interface Color {

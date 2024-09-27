@@ -10,7 +10,7 @@ import io.helidon.service.registry.Service;
 class NamedExample {
 
     /**
-     * A contract to be implemented by named services.
+     * A service to be implemented by named services.
      */
     @Service.Contract
     interface Color {

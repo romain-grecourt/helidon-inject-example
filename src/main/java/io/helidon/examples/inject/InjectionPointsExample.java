@@ -34,7 +34,7 @@ class InjectionPointsExample {
     }
 
     /**
-     * A contract to be implemented by all variations.
+     * A service to be implemented by all variations.
      */
     @Service.Contract
     interface Greeting {

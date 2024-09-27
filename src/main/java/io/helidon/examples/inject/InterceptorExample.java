@@ -46,7 +46,7 @@ class InterceptorExample {
     }
 
     /**
-     * A singleton service with an intercepted constructed and an intercepted method.
+     * A service with an intercepted constructor and an intercepted method.
      */
     @Injection.Singleton
     static class MyConcreteService {
@@ -62,7 +62,7 @@ class InterceptorExample {
     }
 
     /**
-     * A contract with an intercepted method.
+     * A service with an intercepted method.
      */
     @Service.Contract
     interface MyIFaceContract {
@@ -84,7 +84,7 @@ class InterceptorExample {
     }
 
     /**
-     * A contract that is intercepted by delegation.
+     * A service that is intercepted by delegation.
      */
     @Interception.Delegate
     @Service.Contract
@@ -107,7 +107,7 @@ class InterceptorExample {
     }
 
     /**
-     * Another contract with methods intercepted by delegation.
+     * Another service with methods intercepted by delegation.
      */
     @Interception.Delegate
     @Service.Contract
