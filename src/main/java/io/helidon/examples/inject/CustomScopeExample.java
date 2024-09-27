@@ -9,11 +9,13 @@ import io.helidon.common.types.TypeName;
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.InjectRegistrySpi;
 import io.helidon.service.inject.api.Injection;
+import io.helidon.service.inject.api.Lookup;
+import io.helidon.service.inject.api.Qualifier;
 import io.helidon.service.inject.api.Scope;
 import io.helidon.service.inject.api.ScopedRegistry;
 import io.helidon.service.registry.ServiceInfo;
 
-class ScopeExample {
+class CustomScopeExample {
 
     @Injection.Scope
     public @interface MyScope {
@@ -71,7 +73,10 @@ class ScopeExample {
     public static void main(String[] args) {
         var registry = InjectRegistryManager.create().registry();
         var myService = registry.get(MyService.class);
-        var scopeControl = registry.get(MyScopeControl.class);
+        MyScopeControl scopeControl = registry.get(Lookup.builder()
+                .addContract(MyScopeControl.class)
+                .addQualifier(Qualifier.createNamed(MyScope.class))
+                .build());
 
         try (Scope ignored = scopeControl.start("my-scope-1", Map.of())) {
             System.out.println(myService.contract.get().sayHello());

@@ -7,7 +7,6 @@ import io.helidon.service.inject.InjectConfig;
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.RequestScopeControl;
 import io.helidon.service.inject.api.Scope;
-import io.helidon.service.registry.ServiceDiscovery;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,16 +29,13 @@ class InjectExampleTest {
 
     @Test
     void testDescribe() {
-        var discovery = ServiceDiscovery.create();
         var injectConfig = InjectConfig.builder()
-                .putServiceInstance(
-                        discovery.descriptor(DescribeExample.MyContract.class).orElseThrow(),
-                        new DescribeExample.MyContractImpl())
+                .putContractInstance(DescribeExample.MyContract.class, new DescribeExample.MyContractImpl())
                 .build();
-        var registry = InjectRegistryManager.create(injectConfig, discovery).registry();
-        var myService = registry.get(DescribeExample.MyService.class);
+        var registry = InjectRegistryManager.create(injectConfig).registry();
 
-        assertThat(myService.myContract().sayHello(), is("Hello World!"));
+        var myContract = registry.get(DescribeExample.MyContract.class);
+        assertThat(myContract.sayHello(), is("Hello World!"));
     }
 
     @Test
@@ -60,18 +56,29 @@ class InjectExampleTest {
     void testInterceptor() {
         var registryManager = InjectRegistryManager.create();
         var registry = registryManager.registry();
-        var myService = registry.get(InterceptorExample.MyService.class);
-        var myContract = registry.get(InterceptorExample.MyContract.class);
+        var myService = registry.get(InterceptorExample.MyConcreteService.class);
+        var myIFaceContract = registry.get(InterceptorExample.MyIFaceContract.class);
+        var myIFaceDelegatedContract = registry.get(InterceptorExample.MyIFaceDelegatedContract.class);
+        var myIFaceProvidedContract = registry.get(InterceptorExample.MyIFaceProvidedContract.class);
 
         assertThat(myService.sayHello("Joe"), is("Hello Joe!"));
         assertThat(myService.sayHello("John"), is("Hello John!"));
-        assertThat(myContract.sayHello("Julia"), is("Hello Julia!"));
-        assertThat(myContract.sayHello("Jeanne"), is("Hello Jeanne!"));
+        assertThat(myIFaceContract.sayHello("Julia"), is("Hello Julia!"));
+        assertThat(myIFaceContract.sayHello("Jeanne"), is("Hello Jeanne!"));
+        assertThat(myIFaceDelegatedContract.sayHello("Jessica"), is("Hello Jessica!"));
+        assertThat(myIFaceDelegatedContract.sayHello("Juliet"), is("Hello Juliet!"));
+        assertThat(myIFaceProvidedContract.sayHello("Jennifer"), is("Hello Jennifer!"));
+        assertThat(myIFaceProvidedContract.sayHello("Josephine"), is("Hello Josephine!"));
         assertThat(InterceptorExample.MyServiceInterceptor.INVOKED, is(List.of(
-                "%s.sayHello: Joe".formatted(InterceptorExample.MyService.class.getName()),
-                "%s.sayHello: John".formatted(InterceptorExample.MyService.class.getName()),
-                "%s.sayHello: Julia".formatted(InterceptorExample.MyContractSupplier.class.getName()),
-                "%s.sayHello: Jeanne".formatted(InterceptorExample.MyContractSupplier.class.getName()))));
+                "%s.<init>: []".formatted(InterceptorExample.MyConcreteService.class.getName()),
+                "%s.sayHello: [Joe]".formatted(InterceptorExample.MyConcreteService.class.getName()),
+                "%s.sayHello: [John]".formatted(InterceptorExample.MyConcreteService.class.getName()),
+                "%s.sayHello: [Julia]".formatted(InterceptorExample.MyIFaceContractImpl.class.getName()),
+                "%s.sayHello: [Jeanne]".formatted(InterceptorExample.MyIFaceContractImpl.class.getName()),
+                "%s.sayHello: [Jessica]".formatted(InterceptorExample.MyIFaceDelegatedContractImpl.class.getName()),
+                "%s.sayHello: [Juliet]".formatted(InterceptorExample.MyIFaceDelegatedContractImpl.class.getName()),
+                "%s.sayHello: [Jennifer]".formatted(InterceptorExample.MyIFaceProvidedContractSupplier.class.getName()),
+                "%s.sayHello: [Josephine]".formatted(InterceptorExample.MyIFaceProvidedContractSupplier.class.getName()))));
     }
 
     @Test
@@ -117,8 +124,8 @@ class InjectExampleTest {
     @Test
     void testScope() {
         var registry = InjectRegistryManager.create().registry();
-        var myService = registry.get(ScopeExample.MyService.class);
-        var scopeControl = registry.get(ScopeExample.MyScopeControl.class);
+        var myService = registry.get(CustomScopeExample.MyService.class);
+        var scopeControl = registry.get(CustomScopeExample.MyScopeControl.class);
 
         try (Scope ignored = scopeControl.start("test-1", Map.of())) {
             assertThat(myService.contract().get().sayHello(), is("Hello World!"));

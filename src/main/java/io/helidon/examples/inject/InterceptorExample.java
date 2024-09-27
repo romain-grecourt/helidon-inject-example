@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.GeneratedInjectService;
@@ -18,17 +17,8 @@ import io.helidon.service.registry.Service;
 class InterceptorExample {
 
     @Interception.Trigger
-    @Target(ElementType.METHOD)
+    @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
     @interface Intercepted {
-    }
-
-    @Injection.Singleton
-    static class MyService {
-
-        @Intercepted
-        String sayHello(String name) {
-            return "Hello %s!".formatted(name);
-        }
     }
 
     @Injection.Singleton
@@ -41,52 +31,102 @@ class InterceptorExample {
             INVOKED.add("%s.%s: %s".formatted(
                     ctx.serviceInfo().serviceType().declaredName(),
                     ctx.elementInfo().elementName(),
-                    Arrays.stream(args)
-                            .map(Object::toString)
-                            .collect(Collectors.joining(","))));
+                    Arrays.asList(args)));
             return chain.proceed(args);
         }
     }
 
-    @Interception.Delegate
+    @Injection.Singleton
+    static class MyConcreteService {
+
+        @Intercepted
+        MyConcreteService() {
+        }
+
+        @Intercepted
+        String sayHello(String name) {
+            return "Hello %s!".formatted(name);
+        }
+    }
+
     @Service.Contract
-    interface MyContract {
+    interface MyIFaceContract {
 
         @Intercepted
         String sayHello(String name);
     }
 
     @Injection.Singleton
-    static class MyContractSupplier implements Supplier<MyContract> {
+    static class MyIFaceContractImpl implements MyIFaceContract {
+
+        @Override
+        public String sayHello(String name) {
+            return "Hello %s!".formatted(name);
+        }
+    }
+
+    @Interception.Delegate
+    @Service.Contract
+    interface MyIFaceDelegatedContract {
+
+        @Intercepted
+        String sayHello(String name);
+    }
+
+    @Injection.Singleton
+    static class MyIFaceDelegatedContractImpl implements MyIFaceDelegatedContract {
+
+        @Override
+        public String sayHello(String name) {
+            return "Hello %s!".formatted(name);
+        }
+    }
+
+    @Interception.Delegate
+    @Service.Contract
+    interface MyIFaceProvidedContract {
+
+        @Intercepted
+        String sayHello(String name);
+    }
+
+    @Injection.Singleton
+    static class MyIFaceProvidedContractSupplier implements Supplier<MyIFaceProvidedContract> {
 
         private final GeneratedInjectService.InterceptionMetadata interceptMeta;
 
         @Injection.Inject
-        MyContractSupplier(GeneratedInjectService.InterceptionMetadata interceptMeta) {
+        MyIFaceProvidedContractSupplier(GeneratedInjectService.InterceptionMetadata interceptMeta) {
             this.interceptMeta = interceptMeta;
         }
 
-        private MyContract wrap(MyContract delegate) {
-            return InterceptorExample_MyContract__InterceptedDelegate.create(interceptMeta,
-                    InterceptorExample_MyContractSupplier__ServiceDescriptor.INSTANCE,
+        private MyIFaceProvidedContract wrap(MyIFaceProvidedContract delegate) {
+            return InterceptorExample_MyIFaceProvidedContract__InterceptedDelegate.create(interceptMeta,
+                    InterceptorExample_MyIFaceProvidedContractSupplier__ServiceDescriptor.INSTANCE,
                     delegate);
         }
 
         @Override
-        public MyContract get() {
+        public MyIFaceProvidedContract get() {
             return wrap("Hello %s!"::formatted);
         }
     }
 
     public static void main(String[] args) {
         var registry = InjectRegistryManager.create().registry();
-        var myService = registry.get(MyService.class);
-        var myContract = registry.get(MyContract.class);
+        var myService = registry.get(MyConcreteService.class);
+        var myIFaceContract = registry.get(MyIFaceContract.class);
+        var myIFaceDelegatedContract = registry.get(MyIFaceDelegatedContract.class);
+        var myIFaceProvidedContract = registry.get(MyIFaceProvidedContract.class);
 
         System.out.println(myService.sayHello("Joe"));
         System.out.println(myService.sayHello("Jack"));
-        System.out.println(myContract.sayHello("Julia"));
-        System.out.println(myContract.sayHello("Jeanne"));
+        System.out.println(myIFaceContract.sayHello("Julia"));
+        System.out.println(myIFaceContract.sayHello("Jeanne"));
+        System.out.println(myIFaceDelegatedContract.sayHello("Jessica"));
+        System.out.println(myIFaceDelegatedContract.sayHello("Juliet"));
+        System.out.println(myIFaceProvidedContract.sayHello("Jennifer"));
+        System.out.println(myIFaceProvidedContract.sayHello("Josephine"));
         MyServiceInterceptor.INVOKED.forEach(System.out::println);
     }
 }

@@ -4,7 +4,7 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.registry.Service;
 
-class QualifierExample {
+class CustomQualifierExample {
 
     @Service.Contract
     interface Color {
