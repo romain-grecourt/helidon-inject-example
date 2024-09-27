@@ -5,14 +5,24 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.registry.Service;
 
+/**
+ * An example that illustrates usages of {@link Injection.Describe}.
+ */
 class DescribeExample {
 
+    /**
+     * A greeting that needs to be described separately.
+     */
     @Injection.Describe
     @Service.Contract
     interface MyContract {
         String sayHello();
     }
 
+    /**
+     * A non-service implementation of the greeting.
+     * It is instantiated manually and passed to the registry manager config.
+     */
     static class MyContractImpl implements MyContract {
 
         @Override
@@ -21,12 +31,18 @@ class DescribeExample {
         }
     }
 
+    /**
+     * A singleton service that injects the described greeting.
+     *
+     * @param myContract myContract
+     */
     @Injection.Singleton
     record MyService(MyContract myContract) {
     }
 
     public static void main(String[] args) {
         var injectConfig = InjectConfig.builder()
+                // pass the non managed instance of the described greeting
                 .putContractInstance(MyContract.class, new MyContractImpl())
                 .build();
         var registry = InjectRegistryManager.create(injectConfig).registry();

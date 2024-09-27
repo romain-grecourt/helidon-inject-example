@@ -14,13 +14,22 @@ import io.helidon.service.inject.api.Interception;
 import io.helidon.service.inject.api.InvocationContext;
 import io.helidon.service.registry.Service;
 
+/**
+ * An example that illustrates usages of {@link Interception.Interceptor}.
+ */
 class InterceptorExample {
 
+    /**
+     * An annotation to mark methods to be intercepted.
+     */
     @Interception.Trigger
     @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
     @interface Intercepted {
     }
 
+    /**
+     * An interceptor implementation that supports {@link Intercepted}.
+     */
     @Injection.Singleton
     @Injection.NamedByClass(Intercepted.class)
     static class MyServiceInterceptor implements Interception.Interceptor {
@@ -36,6 +45,9 @@ class InterceptorExample {
         }
     }
 
+    /**
+     * A singleton service with an intercepted constructed and an intercepted method.
+     */
     @Injection.Singleton
     static class MyConcreteService {
 
@@ -49,6 +61,9 @@ class InterceptorExample {
         }
     }
 
+    /**
+     * A greeting with an intercepted method.
+     */
     @Service.Contract
     interface MyIFaceContract {
 
@@ -56,6 +71,9 @@ class InterceptorExample {
         String sayHello(String name);
     }
 
+    /**
+     * A service that implements a greeting with intercepted methods.
+     */
     @Injection.Singleton
     static class MyIFaceContractImpl implements MyIFaceContract {
 
@@ -65,6 +83,9 @@ class InterceptorExample {
         }
     }
 
+    /**
+     * A greeting that is intercepted by delegation.
+     */
     @Interception.Delegate
     @Service.Contract
     interface MyIFaceDelegatedContract {
@@ -73,6 +94,9 @@ class InterceptorExample {
         String sayHello(String name);
     }
 
+    /**
+     * A service that implements a greeting with methods intercepted by delegation.
+     */
     @Injection.Singleton
     static class MyIFaceDelegatedContractImpl implements MyIFaceDelegatedContract {
 
@@ -82,6 +106,9 @@ class InterceptorExample {
         }
     }
 
+    /**
+     * Another greeting with methods intercepted by delegation.
+     */
     @Interception.Delegate
     @Service.Contract
     interface MyIFaceProvidedContract {
@@ -90,6 +117,9 @@ class InterceptorExample {
         String sayHello(String name);
     }
 
+    /**
+     * A service that implements a provider greeting with methods intercepted by delegation.
+     */
     @Injection.Singleton
     static class MyIFaceProvidedContractSupplier implements Supplier<MyIFaceProvidedContract> {
 

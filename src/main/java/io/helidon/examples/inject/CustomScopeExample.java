@@ -15,13 +15,22 @@ import io.helidon.service.inject.api.Scope;
 import io.helidon.service.inject.api.ScopedRegistry;
 import io.helidon.service.registry.ServiceInfo;
 
+/**
+ * An example that illustrates usages of {@link Injection.Scope}.
+ */
 class CustomScopeExample {
 
+    /**
+     * A custom scope annotation.
+     */
     @Injection.Scope
     public @interface MyScope {
         TypeName TYPE = TypeName.create(MyScope.class);
     }
 
+    /**
+     * A service that implements {@link Injection.ScopeHandler} to support {@link MyScope}.
+     */
     @Injection.Singleton
     static class MyScopeControl implements Injection.ScopeHandler<MyScope> {
 
@@ -57,6 +66,9 @@ class CustomScopeExample {
         }
     }
 
+    /**
+     * A greeting that uses the custom scope.
+     */
     @MyScope
     @Injection.Instance
     static class MyContract {
@@ -66,6 +78,11 @@ class CustomScopeExample {
         }
     }
 
+    /**
+     * A singleton service that consumes a service in the custom scope.
+     *
+     * @param contract greeting supplier
+     */
     @Injection.Singleton
     record MyService(Supplier<MyContract> contract) {
     }

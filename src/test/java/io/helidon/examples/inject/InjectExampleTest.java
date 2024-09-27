@@ -11,6 +11,9 @@ import io.helidon.service.inject.api.Scope;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
 
@@ -41,9 +44,9 @@ class InjectExampleTest {
     @Test
     void testInstance() {
         var registry = InjectRegistryManager.create().registry();
-        var myInstance1 = registry.get(InstanceExample.MyInstance.class);
-        var myInstance2 = registry.get(InstanceExample.MyInstance.class);
-        var mySingleton = registry.get(InstanceExample.MySingleton.class);
+        var myInstance1 = registry.get(PerLookupExample.MyInstance.class);
+        var myInstance2 = registry.get(PerLookupExample.MyInstance.class);
+        var mySingleton = registry.get(PerLookupExample.MySingleton.class);
 
         assertThat(System.identityHashCode(myInstance1),
                 is(not(System.identityHashCode(myInstance2))));
@@ -104,10 +107,9 @@ class InjectExampleTest {
     @Test
     void testWeighted() {
         var registry = InjectRegistryManager.create().registry();
-        var symbol = registry.get(WeightedExample.Symbol.class);
+        var color = registry.get(WeightedExample.Color.class);
 
-        assertThat(symbol.color().name(), is("green"));
-        assertThat(symbol.shape().isPresent(), is(false));
+        assertThat(color.name(), is("green"));
     }
 
     @Test
@@ -130,5 +132,46 @@ class InjectExampleTest {
         try (Scope ignored = scopeControl.start("test-1", Map.of())) {
             assertThat(myService.contract().get().sayHello(), is("Hello World!"));
         }
+    }
+
+    @Test
+    void testInjectionPoints() {
+        var registry = InjectRegistryManager.create().registry();
+        var greetings = registry.get(InjectionPointsExample.Greetings.class);
+
+        assertThat(greetings.greet(), containsInAnyOrder(
+                "%s: Hello Joe!".formatted(InjectionPointsExample.GreetingWithCyclicDep1.class.getSimpleName()),
+                "%s: Hello Jack!".formatted(InjectionPointsExample.GreetingWithCyclicDep1.class.getSimpleName()),
+                "%s: Hello Julia!".formatted(InjectionPointsExample.GreetingWithExplicitCtorInjection.class.getSimpleName()),
+                "%s: Hello Jeanne!".formatted(InjectionPointsExample.GreetingWithFieldInjection.class.getSimpleName()),
+                "%s: Hello Jessica!".formatted(InjectionPointsExample.GreetingWithImplicitCtorInjection.class.getSimpleName()),
+                "%s: Hello Juliet!".formatted(InjectionPointsExample.GreetingWithInheritedFieldInjection.class.getSimpleName()),
+                "%s: Hello Jennifer!".formatted(InjectionPointsExample.GreetingWithMethodInjection.class.getSimpleName()),
+                "%s: Hello Josephine!".formatted(InjectionPointsExample.GreetingWithOptionalIP.class.getSimpleName()),
+                "%s: Hello John!".formatted(InjectionPointsExample.GreetingWithRecord.class.getSimpleName()),
+                "%s: Hello Jacqueline!".formatted(InjectionPointsExample.GreetingWithRecordCanonicalCtor.class.getSimpleName()).toUpperCase(),
+                "%s: Hello Joe!".formatted(InjectionPointsExample.GreetingWithRecordCompactCtor.class.getSimpleName()),
+                "%s: Hello Joe!!!".formatted(InjectionPointsExample.GreetingWithRecordCustomCtor.class.getSimpleName())
+        ));
+    }
+
+    @Test
+    void testExternalContract() {
+        var registry = InjectRegistryManager.create().registry();
+        var name = registry.get(CharSequence.class);
+        assertThat(ExternalContractExample.RandomName.NAMES, hasItem(name.toString()));
+    }
+
+    @Test
+    void testRunLevel() {
+        var registry = InjectRegistryManager.create().registry();
+        RunLevelExample.startRunLevels(registry);
+        assertThat(RunLevelExample.STARTUP_EVENTS, hasItems("level1", "level2"));
+    }
+
+    @Test
+    void testCustomMain() {
+        CustomMainExample.main0();
+        assertThat(CustomMainExample.GREETING.get(), is("Hello World!"));
     }
 }

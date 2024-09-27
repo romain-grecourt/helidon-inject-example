@@ -5,12 +5,23 @@ import java.util.function.Supplier;
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 
-class InstanceExample {
+/**
+ * An example that illustrates usages of {@link Injection.Instance} without scope.
+ */
+class PerLookupExample {
 
+    /**
+     * A service with the default scope.
+     */
     @Injection.Instance
     static class MyInstance {
     }
 
+    /**
+     * A singleton service.
+     *
+     * @param instance supplier of the service
+     */
     @Injection.Singleton
     record MySingleton(Supplier<MyInstance> instance) {
     }

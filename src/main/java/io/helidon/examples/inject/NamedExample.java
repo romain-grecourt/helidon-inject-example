@@ -4,13 +4,22 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.registry.Service;
 
+/**
+ * An example that illustrates usages of {@link Injection.Named}.
+ */
 class NamedExample {
 
+    /**
+     * A greeting to be implemented by named services.
+     */
     @Service.Contract
     interface Color {
         String hexCode();
     }
 
+    /**
+     * A named service.
+     */
     @Injection.Named("blue")
     @Injection.Singleton
     static class Blue implements Color {
@@ -21,6 +30,9 @@ class NamedExample {
         }
     }
 
+    /**
+     * A named service.
+     */
     @Injection.Named("green")
     @Injection.Singleton
     static class Green implements Color {
@@ -31,10 +43,20 @@ class NamedExample {
         }
     }
 
+    /**
+     * A service that qualifies the injection point using {@link Injection.Named}.
+     *
+     * @param color color
+     */
     @Injection.Singleton
     record BlueCircle(@Injection.Named("blue") Color color) {
     }
 
+    /**
+     * A service that qualifies the injection point using {@link Injection.Named}.
+     *
+     * @param color color
+     */
     @Injection.Singleton
     record GreenCircle(@Injection.Named("green") Color color) {
     }

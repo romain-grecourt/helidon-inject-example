@@ -4,13 +4,22 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.registry.Service;
 
+/**
+ * An example that illustrates usages of {@link Injection.CreateFor}.
+ */
 class CreateForExample {
 
+    /**
+     * A greeting to be implemented by named services.
+     */
     @Service.Contract
     interface Color {
         String hexCode();
     }
 
+    /**
+     * A named service.
+     */
     @Injection.Named("blue")
     @Injection.Singleton
     static class Blue implements Color {
@@ -21,6 +30,9 @@ class CreateForExample {
         }
     }
 
+    /**
+     * A named service.
+     */
     @Injection.Named("green")
     @Injection.Singleton
     static class Green implements Color {
@@ -31,10 +43,22 @@ class CreateForExample {
         }
     }
 
+    /**
+     * A service that is created for each named instance of {@link Color}.
+     *
+     * @param name  the matched name
+     * @param color the matched color
+     */
     @Injection.CreateFor(Color.class)
     record Circle(@Injection.CreateForName String name, Color color) {
     }
 
+    /**
+     * A service that illustrates the inherited names.
+     *
+     * @param blue  blue circle
+     * @param green green circle
+     */
     @Injection.Singleton
     record Circles(@Injection.Named("blue") Circle blue,
                    @Injection.Named("green") Circle green) {

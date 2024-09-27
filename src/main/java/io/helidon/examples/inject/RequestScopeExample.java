@@ -8,18 +8,29 @@ import io.helidon.service.inject.api.Injection;
 import io.helidon.service.inject.api.RequestScopeControl;
 import io.helidon.service.inject.api.Scope;
 
+/**
+ * An example that illustrates usages of {@link Injection.RequestScope}.
+ */
 class RequestScopeExample {
 
+    /**
+     * A service in request scope.
+     */
     @Injection.RequestScope
-    static class MyContract {
+    static class MyRequestScopeService {
 
         String sayHello() {
             return "Hello World!";
         }
     }
 
+    /**
+     * A singleton service that consumes a service in request scope.
+     *
+     * @param contract request scope supplier
+     */
     @Injection.Singleton
-    record MyService(Supplier<MyContract> contract) {
+    record MyService(Supplier<MyRequestScopeService> contract) {
     }
 
     public static void main(String[] args) {

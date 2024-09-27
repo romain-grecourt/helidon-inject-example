@@ -1,24 +1,34 @@
 package io.helidon.examples.inject;
 
-import java.util.Optional;
-
 import io.helidon.common.Weight;
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.registry.Service;
 
+/**
+ * An example that illustrates usages of {@link Weight} to order services.
+ */
 class WeightedExample {
 
+    /**
+     * A greeting to be implemented by weighted services.
+     */
     @Service.Contract
     interface Color {
         String name();
     }
 
+    /**
+     * A greeting with no implementation.
+     */
     @Service.Contract
     interface Shape {
         String name();
     }
 
+    /**
+     * A weighted service.
+     */
     @Weight(1)
     @Injection.Singleton
     static class Blue implements Color {
@@ -29,6 +39,9 @@ class WeightedExample {
         }
     }
 
+    /**
+     * A weighted service.
+     */
     @Weight(2)
     @Injection.Singleton
     static class Green implements Color {
@@ -38,15 +51,10 @@ class WeightedExample {
         }
     }
 
-    @Injection.Singleton
-    record Symbol(Color color, Optional<Shape> shape) {
-    }
-
     public static void main(String[] args) {
         var registry = InjectRegistryManager.create().registry();
-        var symbol = registry.get(Symbol.class);
+        var color = registry.get(Color.class);
 
-        System.out.printf("symbol color name: %s", symbol.color().name());
-        System.out.printf("symbol shape: %s", symbol.shape().map(Shape::name).orElse("circle"));
+        System.out.printf("color name: %s%n", color.name());
     }
 }

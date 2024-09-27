@@ -10,6 +10,9 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.registry.Service;
 
+/**
+ * An example that illustrates usages of {@link Injection.Inject}.
+ */
 class InjectionPointsExample {
 
     /**
@@ -44,7 +47,7 @@ class InjectionPointsExample {
     }
 
     /**
-     * A contract for greeting people.
+     * A greeting to be implemented by all variations.
      */
     @Service.Contract
     interface Greeting {
