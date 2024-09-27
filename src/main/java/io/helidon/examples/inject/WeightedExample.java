@@ -19,14 +19,6 @@ class WeightedExample {
     }
 
     /**
-     * A greeting with no implementation.
-     */
-    @Service.Contract
-    interface Shape {
-        String name();
-    }
-
-    /**
      * A weighted service.
      */
     @Weight(1)

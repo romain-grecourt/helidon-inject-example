@@ -30,7 +30,7 @@ class InterceptorExample {
     /**
      * An interceptor implementation that supports {@link Intercepted}.
      */
-    @Injection.Singleton
+    @Injection.Instance
     @Injection.NamedByClass(Intercepted.class)
     static class MyServiceInterceptor implements Interception.Interceptor {
         static final List<String> INVOKED = new ArrayList<>();
@@ -95,7 +95,7 @@ class InterceptorExample {
     }
 
     /**
-     * A service that implements a greeting with methods intercepted by delegation.
+     * A service that implements a contract with methods intercepted by delegation.
      */
     @Injection.Singleton
     static class MyIFaceDelegatedContractImpl implements MyIFaceDelegatedContract {
@@ -118,7 +118,7 @@ class InterceptorExample {
     }
 
     /**
-     * A service that implements a provider greeting with methods intercepted by delegation.
+     * A service that implements a provider of a contract with methods intercepted by delegation.
      */
     @Injection.Singleton
     static class MyIFaceProvidedContractSupplier implements Supplier<MyIFaceProvidedContract> {
