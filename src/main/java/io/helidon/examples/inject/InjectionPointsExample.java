@@ -254,6 +254,11 @@ class InjectionPointsExample {
         }
     }
 
+    /**
+     * A service with a cyclic dependency that broken-up using a {@link Supplier}.
+     *
+     * @param dependency dependency
+     */
     @Injection.Singleton
     record GreetingWithCyclicDep1(Supplier<GreetingWithCyclicDep2> dependency) implements Greeting {
 
@@ -263,6 +268,12 @@ class InjectionPointsExample {
         }
     }
 
+    /**
+     * A service with a cyclic dependency.
+     *
+     * @param dependency dependency
+     * @param greeter    greeter
+     */
     @Injection.Singleton
     record GreetingWithCyclicDep2(GreetingWithCyclicDep1 dependency, Greeter greeter) implements Greeting {
 
