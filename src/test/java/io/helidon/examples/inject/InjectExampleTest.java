@@ -124,7 +124,7 @@ class InjectExampleTest {
     }
 
     @Test
-    void testScope() {
+    void testCustomScope() {
         var registry = InjectRegistryManager.create().registry();
         var myService = registry.get(CustomScopeExample.MyService.class);
         var scopeControl = registry.get(CustomScopeExample.MyScopeControl.class);

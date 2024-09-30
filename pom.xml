@@ -34,21 +34,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.helidon.service</groupId>
-            <artifactId>helidon-service-registry</artifactId>
-        </dependency>
-        <dependency>
             <groupId>io.helidon.service.inject</groupId>
             <artifactId>helidon-service-inject-api</artifactId>
         </dependency>
         <dependency>
             <groupId>io.helidon.service.inject</groupId>
             <artifactId>helidon-service-inject</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.helidon.config</groupId>
-            <artifactId>helidon-config</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -58,11 +49,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-all</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.helidon.common.testing</groupId>
-            <artifactId>helidon-common-testing-junit5</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
