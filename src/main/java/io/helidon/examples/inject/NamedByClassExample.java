@@ -5,7 +5,7 @@ import io.helidon.service.inject.api.Injection;
 import io.helidon.service.registry.Service;
 
 /**
- * An example that illustrates usages of {@link Injection.NamedByClass}.
+ * An example that illustrates usages of {@link Injection.NamedByType}.
  */
 class NamedByClassExample {
 
@@ -20,7 +20,7 @@ class NamedByClassExample {
     /**
      * A named service.
      */
-    @Injection.NamedByClass(Blue.class)
+    @Injection.NamedByType(Blue.class)
     @Injection.Singleton
     static class Blue implements Color {
 
@@ -33,7 +33,7 @@ class NamedByClassExample {
     /**
      * A named service.
      */
-    @Injection.NamedByClass(Green.class)
+    @Injection.NamedByType(Green.class)
     @Injection.Singleton
     static class Green implements Color {
 
@@ -44,21 +44,21 @@ class NamedByClassExample {
     }
 
     /**
-     * A service that qualifies the injection point using {@link Injection.NamedByClass}.
+     * A service that qualifies the injection point using {@link Injection.NamedByType}.
      *
      * @param color color
      */
     @Injection.Singleton
-    record BlueSquare(@Injection.NamedByClass(Blue.class) Color color) {
+    record BlueSquare(@Injection.NamedByType(Blue.class) Color color) {
     }
 
     /**
-     * A service that qualifies the injection point using {@link Injection.NamedByClass}.
+     * A service that qualifies the injection point using {@link Injection.NamedByType}.
      *
      * @param color color
      */
     @Injection.Singleton
-    record GreenSquare(@Injection.NamedByClass(Green.class) Color color) {
+    record GreenSquare(@Injection.NamedByType(Green.class) Color color) {
     }
 
     public static void main(String[] args) {

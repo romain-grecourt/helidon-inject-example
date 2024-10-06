@@ -6,14 +6,14 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 
 /**
- * An example that illustrates usages of {@link Injection.Instance} without scope.
+ * An example that illustrates usages of {@link Injection.PerLookup} without scope.
  */
 class PerLookupExample {
 
     /**
      * A service with the default scope.
      */
-    @Injection.Instance
+    @Injection.PerLookup
     static class MyInstance {
     }
 

@@ -5,7 +5,7 @@ import io.helidon.service.inject.api.Injection;
 import io.helidon.service.registry.Service;
 
 /**
- * An example that illustrates usages of {@link Injection.CreateFor}.
+ * An example that illustrates usages of {@link Injection.PerInstance}.
  */
 class CreateForExample {
 
@@ -49,8 +49,8 @@ class CreateForExample {
      * @param name  the matched name
      * @param color the matched color
      */
-    @Injection.CreateFor(Color.class)
-    record Circle(@Injection.CreateForName String name, Color color) {
+    @Injection.PerInstance(Color.class)
+    record Circle(@Injection.InstanceName String name, Color color) {
     }
 
     /**

@@ -10,7 +10,6 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.InjectRegistrySpi;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.inject.api.Scope;
-import io.helidon.service.inject.api.ScopedRegistry;
 import io.helidon.service.registry.ServiceInfo;
 
 /**
@@ -42,10 +41,8 @@ class CustomScopeExample {
         }
 
         Scope start(String id, Map<ServiceInfo, Object> bindings) {
-            var services = registry.createForScope(MyScope.TYPE, id, bindings);
-            var scope = new MyScopeImpl(services);
+            var scope = registry.createScope(MyScope.TYPE, id, bindings, sc -> CURRENT_SCOPE.set(null));
             CURRENT_SCOPE.set(scope);
-            scope.services.activate();
             return scope;
         }
 
@@ -53,23 +50,13 @@ class CustomScopeExample {
         public Optional<Scope> currentScope() {
             return Optional.ofNullable(CURRENT_SCOPE.get());
         }
-
-        private record MyScopeImpl(ScopedRegistry services) implements Scope {
-
-            @Override
-            public void close() {
-                services.deactivate();
-                CURRENT_SCOPE.set(null);
-            }
-        }
     }
 
     /**
-     * A service in the custom scope.
+     * A greeting that uses the custom scope.
      */
     @MyScope
-    @Injection.Instance
-    static class MyScopedService {
+    static class MyContract {
 
         String sayHello() {
             return "Hello World!";
@@ -79,18 +66,19 @@ class CustomScopeExample {
     /**
      * A singleton service that consumes a service in the custom scope.
      *
-     * @param scopedService scoped service
+     * @param contract greeting supplier
      */
     @Injection.Singleton
-    record MyService(Supplier<MyScopedService> scopedService) {
+    record MyService(Supplier<MyContract> contract) {
     }
 
     public static void main(String[] args) {
         var registry = InjectRegistryManager.create().registry();
         var myService = registry.get(MyService.class);
-        MyScopeControl scopeControl = registry.get(MyScopeControl.class);
-        try (Scope ignored = scopeControl.start("my-scope-1", Map.of())) {
-            System.out.println(myService.scopedService.get().sayHello());
+
+        InjectRegistrySpi spi = registry.get(InjectRegistrySpi.class);
+        try(var ignored = spi.createScope(MyScope.TYPE, "id", Map.of())) {
+            System.out.println(myService.contract.get().sayHello());
         }
     }
 }
