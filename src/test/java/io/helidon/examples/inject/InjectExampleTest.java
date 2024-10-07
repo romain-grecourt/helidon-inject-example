@@ -5,7 +5,7 @@ import java.util.Map;
 
 import io.helidon.service.inject.InjectConfig;
 import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.RequestScopeControl;
+import io.helidon.service.inject.api.PerRequestScopeControl;
 import io.helidon.service.inject.api.Scope;
 
 import org.junit.jupiter.api.Test;
@@ -49,10 +49,10 @@ class InjectExampleTest {
         var mySingleton = registry.get(PerLookupExample.MySingleton.class);
 
         assertThat(System.identityHashCode(myInstance1),
-                is(not(System.identityHashCode(myInstance2))));
+                   is(not(System.identityHashCode(myInstance2))));
 
         assertThat(System.identityHashCode(mySingleton.instance().get()),
-                is(not(System.identityHashCode(mySingleton.instance().get()))));
+                   is(not(System.identityHashCode(mySingleton.instance().get()))));
     }
 
     @Test
@@ -116,7 +116,7 @@ class InjectExampleTest {
     void testRequestScope() {
         var registry = InjectRegistryManager.create().registry();
         var myService = registry.get(RequestScopeExample.MyService.class);
-        var scopeControl = registry.get(RequestScopeControl.class);
+        var scopeControl = registry.get(PerRequestScopeControl.class);
 
         try (Scope ignored = scopeControl.startRequestScope("test-1", Map.of())) {
             assertThat(myService.contract().get().sayHello(), is("Hello World!"));
@@ -130,7 +130,7 @@ class InjectExampleTest {
         var scopeControl = registry.get(CustomScopeExample.MyScopeControl.class);
 
         try (Scope ignored = scopeControl.start("test-1", Map.of())) {
-            assertThat(myService.scopedService().get().sayHello(), is("Hello World!"));
+            assertThat(myService.contract().get().sayHello(), is("Hello World!"));
         }
     }
 
@@ -167,11 +167,5 @@ class InjectExampleTest {
         var registry = InjectRegistryManager.create().registry();
         RunLevelExample.startRunLevels(registry);
         assertThat(RunLevelExample.STARTUP_EVENTS, hasItems("level1", "level2"));
-    }
-
-    @Test
-    void testCustomMain() {
-        CustomMainExample.main0();
-        assertThat(CustomMainExample.GREETING.get(), is("Hello World!"));
     }
 }

@@ -8,139 +8,15 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.GeneratedInjectService;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.inject.api.Interception;
-import io.helidon.service.inject.api.InvocationContext;
+import io.helidon.service.inject.api.InterceptionContext;
 import io.helidon.service.registry.Service;
 
 /**
  * An example that illustrates usages of {@link Interception.Interceptor}.
  */
 class InterceptorExample {
-
-    /**
-     * An annotation to mark methods to be intercepted.
-     */
-    @Interception.Trigger
-    @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-    @interface Intercepted {
-    }
-
-    /**
-     * An interceptor implementation that supports {@link Intercepted}.
-     */
-    @Injection.Instance
-    @Injection.NamedByClass(Intercepted.class)
-    static class MyServiceInterceptor implements Interception.Interceptor {
-        static final List<String> INVOKED = new ArrayList<>();
-
-        @Override
-        public <V> V proceed(InvocationContext ctx, Chain<V> chain, Object... args) throws Exception {
-            INVOKED.add("%s.%s: %s".formatted(
-                    ctx.serviceInfo().serviceType().declaredName(),
-                    ctx.elementInfo().elementName(),
-                    Arrays.asList(args)));
-            return chain.proceed(args);
-        }
-    }
-
-    /**
-     * A service with an intercepted constructor and an intercepted method.
-     */
-    @Injection.Singleton
-    static class MyConcreteService {
-
-        @Intercepted
-        MyConcreteService() {
-        }
-
-        @Intercepted
-        String sayHello(String name) {
-            return "Hello %s!".formatted(name);
-        }
-    }
-
-    /**
-     * A service with an intercepted method.
-     */
-    @Service.Contract
-    interface MyIFaceContract {
-
-        @Intercepted
-        String sayHello(String name);
-    }
-
-    /**
-     * A service that implements a greeting with intercepted methods.
-     */
-    @Injection.Singleton
-    static class MyIFaceContractImpl implements MyIFaceContract {
-
-        @Override
-        public String sayHello(String name) {
-            return "Hello %s!".formatted(name);
-        }
-    }
-
-    /**
-     * A service that is intercepted by delegation.
-     */
-    @Interception.Delegate
-    @Service.Contract
-    interface MyIFaceDelegatedContract {
-
-        @Intercepted
-        String sayHello(String name);
-    }
-
-    /**
-     * A service that implements a contract with methods intercepted by delegation.
-     */
-    @Injection.Singleton
-    static class MyIFaceDelegatedContractImpl implements MyIFaceDelegatedContract {
-
-        @Override
-        public String sayHello(String name) {
-            return "Hello %s!".formatted(name);
-        }
-    }
-
-    /**
-     * Another service with methods intercepted by delegation.
-     */
-    @Interception.Delegate
-    @Service.Contract
-    interface MyIFaceProvidedContract {
-
-        @Intercepted
-        String sayHello(String name);
-    }
-
-    /**
-     * A service that implements a provider of a contract with methods intercepted by delegation.
-     */
-    @Injection.Singleton
-    static class MyIFaceProvidedContractSupplier implements Supplier<MyIFaceProvidedContract> {
-
-        private final GeneratedInjectService.InterceptionMetadata interceptMeta;
-
-        @Injection.Inject
-        MyIFaceProvidedContractSupplier(GeneratedInjectService.InterceptionMetadata interceptMeta) {
-            this.interceptMeta = interceptMeta;
-        }
-
-        private MyIFaceProvidedContract wrap(MyIFaceProvidedContract delegate) {
-            return InterceptorExample_MyIFaceProvidedContract__InterceptedDelegate.create(interceptMeta,
-                    InterceptorExample_MyIFaceProvidedContractSupplier__ServiceDescriptor.INSTANCE,
-                    delegate);
-        }
-
-        @Override
-        public MyIFaceProvidedContract get() {
-            return wrap("Hello %s!"::formatted);
-        }
-    }
 
     public static void main(String[] args) {
         var registry = InjectRegistryManager.create().registry();
@@ -158,5 +34,114 @@ class InterceptorExample {
         System.out.println(myIFaceProvidedContract.sayHello("Jennifer"));
         System.out.println(myIFaceProvidedContract.sayHello("Josephine"));
         MyServiceInterceptor.INVOKED.forEach(System.out::println);
+    }
+
+    /**
+     * An annotation to mark methods to be intercepted.
+     */
+    @Interception.Intercepted
+    @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
+    @interface Intercepted {
+    }
+
+    /**
+     * A greeting with an intercepted method.
+     */
+    @Service.Contract
+    interface MyIFaceContract {
+
+        @Intercepted
+        String sayHello(String name);
+    }
+
+    /**
+     * A greeting that is intercepted by delegation.
+     */
+    @Interception.Delegate
+    @Service.Contract
+    interface MyIFaceDelegatedContract {
+
+        @Intercepted
+        String sayHello(String name);
+    }
+
+    /**
+     * Another greeting with methods intercepted by delegation.
+     */
+    @Interception.Delegate
+    @Service.Contract
+    interface MyIFaceProvidedContract {
+
+        @Intercepted
+        String sayHello(String name);
+    }
+
+    /**
+     * An interceptor implementation that supports {@link Intercepted}.
+     */
+    @Injection.Singleton
+    @Injection.NamedByType(Intercepted.class)
+    static class MyServiceInterceptor implements Interception.Interceptor {
+        static final List<String> INVOKED = new ArrayList<>();
+
+        @Override
+        public <V> V proceed(InterceptionContext ctx, Chain<V> chain, Object... args) throws Exception {
+            INVOKED.add("%s.%s: %s".formatted(
+                    ctx.serviceInfo().serviceType().declaredName(),
+                    ctx.elementInfo().elementName(),
+                    Arrays.asList(args)));
+            return chain.proceed(args);
+        }
+    }
+
+    /**
+     * A singleton service with an intercepted constructed and an intercepted method.
+     */
+    @Injection.Singleton
+    static class MyConcreteService {
+
+        @Intercepted
+        MyConcreteService() {
+        }
+
+        @Intercepted
+        String sayHello(String name) {
+            return "Hello %s!".formatted(name);
+        }
+    }
+
+    /**
+     * A service that implements a greeting with intercepted methods.
+     */
+    @Injection.Singleton
+    static class MyIFaceContractImpl implements MyIFaceContract {
+
+        @Override
+        public String sayHello(String name) {
+            return "Hello %s!".formatted(name);
+        }
+    }
+
+    /**
+     * A service that implements a greeting with methods intercepted by delegation.
+     */
+    @Injection.Singleton
+    static class MyIFaceDelegatedContractImpl implements MyIFaceDelegatedContract {
+
+        @Override
+        public String sayHello(String name) {
+            return "Hello %s!".formatted(name);
+        }
+    }
+
+    /**
+     * A service that implements a provider greeting with methods intercepted by delegation.
+     */
+    @Injection.Singleton
+    static class MyIFaceProvidedContractSupplier implements Supplier<MyIFaceProvidedContract> {
+        @Override
+        public MyIFaceProvidedContract get() {
+            return "Hello %s!"::formatted;
+        }
     }
 }

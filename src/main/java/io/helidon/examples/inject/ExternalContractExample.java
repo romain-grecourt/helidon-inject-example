@@ -15,7 +15,7 @@ class ExternalContractExample {
     /**
      * A service that implements {@link CharSequence} as a greeting.
      */
-    @Injection.Instance
+    @Injection.PerLookup
     @Service.ExternalContracts(CharSequence.class)
     static class RandomName implements CharSequence {
 

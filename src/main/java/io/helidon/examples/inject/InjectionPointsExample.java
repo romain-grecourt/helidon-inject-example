@@ -18,7 +18,7 @@ class InjectionPointsExample {
     /**
      * A service to be injected.
      */
-    @Injection.Instance
+    @Injection.PerLookup
     static class Greeter {
 
         Function<String, String> filter = Function.identity();
