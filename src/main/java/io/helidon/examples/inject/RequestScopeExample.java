@@ -9,7 +9,7 @@ import io.helidon.service.inject.api.PerRequestScopeControl;
 import io.helidon.service.inject.api.Scope;
 
 /**
- * An example that illustrates usages of {@link Injection.RequestScope}.
+ * An example that illustrates usages of {@link Injection.PerRequest}.
  */
 class RequestScopeExample {
 
