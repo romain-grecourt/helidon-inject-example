@@ -11,7 +11,7 @@ import io.helidon.service.registry.Service;
 class WeightedExample {
 
     /**
-     * A greeting to be implemented by weighted services.
+     * A contract to be implemented by weighted services.
      */
     @Service.Contract
     interface Color {

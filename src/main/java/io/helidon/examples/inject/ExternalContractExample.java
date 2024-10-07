@@ -13,7 +13,7 @@ import io.helidon.service.registry.Service;
 class ExternalContractExample {
 
     /**
-     * A service that implements {@link CharSequence} as a greeting.
+     * A service that implements {@link CharSequence} contract.
      */
     @Injection.PerLookup
     @Service.ExternalContracts(CharSequence.class)

@@ -7,7 +7,7 @@ import io.helidon.service.registry.Service;
 /**
  * An example that illustrates usages of {@link Injection.NamedByType}.
  */
-class NamedByClassExample {
+class NamedByTypeExample {
 
     /**
      * A service to be implemented by named services.

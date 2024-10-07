@@ -53,10 +53,10 @@ class CustomScopeExample {
     }
 
     /**
-     * A greeting that uses the custom scope.
+     * A service that uses the custom scope.
      */
     @MyScope
-    static class MyContract {
+    static class MyScopedService {
 
         String sayHello() {
             return "Hello World!";
@@ -66,10 +66,10 @@ class CustomScopeExample {
     /**
      * A singleton service that consumes a service in the custom scope.
      *
-     * @param contract greeting supplier
+     * @param contract contract supplier
      */
     @Injection.Singleton
-    record MyService(Supplier<MyContract> contract) {
+    record MyService(Supplier<MyScopedService> contract) {
     }
 
     public static void main(String[] args) {

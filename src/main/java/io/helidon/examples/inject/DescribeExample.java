@@ -20,7 +20,7 @@ class DescribeExample {
     }
 
     /**
-     * A non-service implementation of the greeting.
+     * A non-service implementation of the contract.
      * It is instantiated manually and passed to the registry manager config.
      */
     static class MyContractImpl implements MyContract {
@@ -32,7 +32,7 @@ class DescribeExample {
     }
 
     /**
-     * A singleton service that injects the described greeting.
+     * A singleton service that injects the described contract.
      *
      * @param myContract myContract
      */
@@ -42,7 +42,7 @@ class DescribeExample {
 
     public static void main(String[] args) {
         var injectConfig = InjectConfig.builder()
-                // pass the non managed instance of the described greeting
+                // pass the non managed instance of the described contract
                 .putContractInstance(MyContract.class, new MyContractImpl())
                 .build();
         var registry = InjectRegistryManager.create(injectConfig).registry();

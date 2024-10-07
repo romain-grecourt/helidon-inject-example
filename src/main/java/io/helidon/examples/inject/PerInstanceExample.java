@@ -7,7 +7,7 @@ import io.helidon.service.registry.Service;
 /**
  * An example that illustrates usages of {@link Injection.PerInstance}.
  */
-class CreateForExample {
+class PerInstanceExample {
 
     /**
      * A service to be implemented by named services.

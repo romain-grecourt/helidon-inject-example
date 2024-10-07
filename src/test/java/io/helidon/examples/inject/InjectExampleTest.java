@@ -9,6 +9,7 @@ import io.helidon.service.inject.api.PerRequestScopeControl;
 import io.helidon.service.inject.api.Scope;
 
 import org.junit.jupiter.api.Test;
+import org.junitpioneer.jupiter.ExpectedToFail;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -22,7 +23,7 @@ class InjectExampleTest {
     @Test
     void testCreateFor() {
         var registry = InjectRegistryManager.create().registry();
-        var circles = registry.get(CreateForExample.Circles.class);
+        var circles = registry.get(PerInstanceExample.Circles.class);
 
         assertThat(circles.blue().name(), is("blue"));
         assertThat(circles.blue().color().hexCode(), is("0000FF"));
@@ -87,8 +88,8 @@ class InjectExampleTest {
     @Test
     void testNamedByClass() {
         var registry = InjectRegistryManager.create().registry();
-        var blueCircle = registry.get(NamedByClassExample.BlueSquare.class);
-        var greenCircle = registry.get(NamedByClassExample.GreenSquare.class);
+        var blueCircle = registry.get(NamedByTypeExample.BlueSquare.class);
+        var greenCircle = registry.get(NamedByTypeExample.GreenSquare.class);
 
         assertThat(blueCircle.color().hexCode(), is("0000FF"));
         assertThat(greenCircle.color().hexCode(), is("008000"));
@@ -115,7 +116,7 @@ class InjectExampleTest {
     @Test
     void testRequestScope() {
         var registry = InjectRegistryManager.create().registry();
-        var myService = registry.get(RequestScopeExample.MyService.class);
+        var myService = registry.get(PerRequestExample.MyService.class);
         var scopeControl = registry.get(PerRequestScopeControl.class);
 
         try (Scope ignored = scopeControl.startRequestScope("test-1", Map.of())) {
@@ -167,5 +168,16 @@ class InjectExampleTest {
         var registry = InjectRegistryManager.create().registry();
         RunLevelExample.startRunLevels(registry);
         assertThat(RunLevelExample.STARTUP_EVENTS, hasItems("level1", "level2"));
+    }
+
+    @Test
+    @ExpectedToFail
+    void testGenerics() {
+        var registry = InjectRegistryManager.create().registry();
+        var myService = registry.get(GenericsExample.MyService.class);
+
+        assertThat(myService.blueCircle().name(), is("blue circle"));
+        assertThat(myService.greenCircle().name(), is("green circle"));
+        assertThat(myService.circleNames(), is(List.of("blue circle", "green circle")));
     }
 }

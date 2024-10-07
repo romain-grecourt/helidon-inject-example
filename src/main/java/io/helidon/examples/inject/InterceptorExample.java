@@ -18,69 +18,51 @@ import io.helidon.service.registry.Service;
  */
 class InterceptorExample {
 
-    public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
-        var myService = registry.get(MyConcreteService.class);
-        var myIFaceContract = registry.get(MyIFaceContract.class);
-        var myIFaceDelegatedContract = registry.get(MyIFaceDelegatedContract.class);
-        var myIFaceProvidedContract = registry.get(MyIFaceProvidedContract.class);
-
-        System.out.println(myService.sayHello("Joe"));
-        System.out.println(myService.sayHello("Jack"));
-        System.out.println(myIFaceContract.sayHello("Julia"));
-        System.out.println(myIFaceContract.sayHello("Jeanne"));
-        System.out.println(myIFaceDelegatedContract.sayHello("Jessica"));
-        System.out.println(myIFaceDelegatedContract.sayHello("Juliet"));
-        System.out.println(myIFaceProvidedContract.sayHello("Jennifer"));
-        System.out.println(myIFaceProvidedContract.sayHello("Josephine"));
-        MyServiceInterceptor.INVOKED.forEach(System.out::println);
-    }
-
     /**
      * An annotation to mark methods to be intercepted.
      */
     @Interception.Intercepted
     @Target({ElementType.METHOD, ElementType.CONSTRUCTOR})
-    @interface Intercepted {
+    @interface Traced {
     }
 
     /**
-     * A greeting with an intercepted method.
+     * A contract with an intercepted method.
      */
     @Service.Contract
     interface MyIFaceContract {
 
-        @Intercepted
+        @Traced
         String sayHello(String name);
     }
 
     /**
-     * A greeting that is intercepted by delegation.
+     * A contract that is intercepted by delegation.
      */
     @Interception.Delegate
     @Service.Contract
     interface MyIFaceDelegatedContract {
 
-        @Intercepted
+        @Traced
         String sayHello(String name);
     }
 
     /**
-     * Another greeting with methods intercepted by delegation.
+     * Another contract with methods intercepted by delegation.
      */
     @Interception.Delegate
     @Service.Contract
     interface MyIFaceProvidedContract {
 
-        @Intercepted
+        @Traced
         String sayHello(String name);
     }
 
     /**
-     * An interceptor implementation that supports {@link Intercepted}.
+     * An interceptor implementation that supports {@link Traced}.
      */
     @Injection.Singleton
-    @Injection.NamedByType(Intercepted.class)
+    @Injection.NamedByType(Traced.class)
     static class MyServiceInterceptor implements Interception.Interceptor {
         static final List<String> INVOKED = new ArrayList<>();
 
@@ -100,18 +82,18 @@ class InterceptorExample {
     @Injection.Singleton
     static class MyConcreteService {
 
-        @Intercepted
+        @Traced
         MyConcreteService() {
         }
 
-        @Intercepted
+        @Traced
         String sayHello(String name) {
             return "Hello %s!".formatted(name);
         }
     }
 
     /**
-     * A service that implements a greeting with intercepted methods.
+     * A service that implements a contract with intercepted methods.
      */
     @Injection.Singleton
     static class MyIFaceContractImpl implements MyIFaceContract {
@@ -123,7 +105,7 @@ class InterceptorExample {
     }
 
     /**
-     * A service that implements a greeting with methods intercepted by delegation.
+     * A service that implements a contract with methods intercepted by delegation.
      */
     @Injection.Singleton
     static class MyIFaceDelegatedContractImpl implements MyIFaceDelegatedContract {
@@ -135,7 +117,7 @@ class InterceptorExample {
     }
 
     /**
-     * A service that implements a provider greeting with methods intercepted by delegation.
+     * A service that implements a provider of a contract with methods intercepted by delegation.
      */
     @Injection.Singleton
     static class MyIFaceProvidedContractSupplier implements Supplier<MyIFaceProvidedContract> {
@@ -143,5 +125,23 @@ class InterceptorExample {
         public MyIFaceProvidedContract get() {
             return "Hello %s!"::formatted;
         }
+    }
+
+    public static void main(String[] args) {
+        var registry = InjectRegistryManager.create().registry();
+        var myService = registry.get(MyConcreteService.class);
+        var myIFaceContract = registry.get(MyIFaceContract.class);
+        var myIFaceDelegatedContract = registry.get(MyIFaceDelegatedContract.class);
+        var myIFaceProvidedContract = registry.get(MyIFaceProvidedContract.class);
+
+        System.out.println(myService.sayHello("Joe"));
+        System.out.println(myService.sayHello("Jack"));
+        System.out.println(myIFaceContract.sayHello("Julia"));
+        System.out.println(myIFaceContract.sayHello("Jeanne"));
+        System.out.println(myIFaceDelegatedContract.sayHello("Jessica"));
+        System.out.println(myIFaceDelegatedContract.sayHello("Juliet"));
+        System.out.println(myIFaceProvidedContract.sayHello("Jennifer"));
+        System.out.println(myIFaceProvidedContract.sayHello("Josephine"));
+        MyServiceInterceptor.INVOKED.forEach(System.out::println);
     }
 }
