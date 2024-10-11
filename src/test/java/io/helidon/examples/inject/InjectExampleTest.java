@@ -171,7 +171,6 @@ class InjectExampleTest {
     }
 
     @Test
-    @ExpectedToFail
     void testGenerics() {
         var registry = InjectRegistryManager.create().registry();
         var myService = registry.get(GenericsExample.MyService.class);

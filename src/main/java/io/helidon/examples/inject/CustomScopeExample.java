@@ -10,7 +10,7 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.InjectRegistrySpi;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.inject.api.Scope;
-import io.helidon.service.registry.ServiceInfo;
+import io.helidon.service.registry.ServiceDescriptor;
 
 /**
  * An example that illustrates usages of {@link Injection.Scope}.
@@ -40,7 +40,7 @@ class CustomScopeExample {
             this.registry = registry;
         }
 
-        Scope start(String id, Map<ServiceInfo, Object> bindings) {
+        Scope start(String id, Map<ServiceDescriptor<?>, Object> bindings) {
             var scope = registry.createScope(MyScope.TYPE, id, bindings, sc -> CURRENT_SCOPE.set(null));
             CURRENT_SCOPE.set(scope);
             return scope;
