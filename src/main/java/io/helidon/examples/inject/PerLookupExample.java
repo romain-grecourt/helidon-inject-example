@@ -11,7 +11,7 @@ import io.helidon.service.inject.api.Injection;
 class PerLookupExample {
 
     /**
-     * A service with the default scope.
+     * A service with the per-lookup scope.
      */
     @Injection.PerLookup
     static class MyInstance {

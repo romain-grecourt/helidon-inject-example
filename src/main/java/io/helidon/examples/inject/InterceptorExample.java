@@ -30,29 +30,28 @@ class InterceptorExample {
      * A contract with an intercepted method.
      */
     @Service.Contract
-    interface MyIFaceContract {
+    interface MyContract {
 
         @Traced
         String sayHello(String name);
     }
 
     /**
-     * A contract that is intercepted by delegation.
+     * An abstract class contract with an intercepted method.
      */
-    @Interception.Delegate
     @Service.Contract
-    interface MyIFaceDelegatedContract {
+    static abstract class MyAbstractClassContract {
 
         @Traced
-        String sayHello(String name);
+        abstract String sayHello(String name);
     }
 
     /**
-     * Another contract with methods intercepted by delegation.
+     * Another contract with an intercepted method.
      */
-    @Interception.Delegate
     @Service.Contract
-    interface MyIFaceProvidedContract {
+    @Interception.Delegate
+    interface MyOtherContract {
 
         @Traced
         String sayHello(String name);
@@ -77,7 +76,7 @@ class InterceptorExample {
     }
 
     /**
-     * A singleton service with an intercepted constructed and an intercepted method.
+     * A singleton service with an intercepted constructor and an intercepted method.
      */
     @Injection.Singleton
     static class MyConcreteService {
@@ -96,7 +95,7 @@ class InterceptorExample {
      * A service that implements a contract with intercepted methods.
      */
     @Injection.Singleton
-    static class MyIFaceContractImpl implements MyIFaceContract {
+    static class MyContractImpl implements MyContract {
 
         @Override
         public String sayHello(String name) {
@@ -105,10 +104,11 @@ class InterceptorExample {
     }
 
     /**
-     * A service that implements a contract with methods intercepted by delegation.
+     * A service that extends an abstract class contract with an intercepted method.
      */
     @Injection.Singleton
-    static class MyIFaceDelegatedContractImpl implements MyIFaceDelegatedContract {
+    @Interception.Delegate
+    static class MyAbstractClassContractImpl extends MyAbstractClassContract {
 
         @Override
         public String sayHello(String name) {
@@ -117,12 +117,12 @@ class InterceptorExample {
     }
 
     /**
-     * A service that implements a provider of a contract with methods intercepted by delegation.
+     * A service that implements a provider of a contract with an intercepted method.
      */
     @Injection.Singleton
-    static class MyIFaceProvidedContractSupplier implements Supplier<MyIFaceProvidedContract> {
+    static class MyContractProvider implements Supplier<MyOtherContract> {
         @Override
-        public MyIFaceProvidedContract get() {
+        public MyOtherContract get() {
             return "Hello %s!"::formatted;
         }
     }
@@ -130,9 +130,9 @@ class InterceptorExample {
     public static void main(String[] args) {
         var registry = InjectRegistryManager.create().registry();
         var myService = registry.get(MyConcreteService.class);
-        var myIFaceContract = registry.get(MyIFaceContract.class);
-        var myIFaceDelegatedContract = registry.get(MyIFaceDelegatedContract.class);
-        var myIFaceProvidedContract = registry.get(MyIFaceProvidedContract.class);
+        var myIFaceContract = registry.get(MyContract.class);
+        var myIFaceDelegatedContract = registry.get(MyAbstractClassContract.class);
+        var myIFaceProvidedContract = registry.get(MyOtherContract.class);
 
         System.out.println(myService.sayHello("Joe"));
         System.out.println(myService.sayHello("Jack"));
