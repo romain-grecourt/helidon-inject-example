@@ -10,7 +10,6 @@ import io.helidon.service.inject.api.Scope;
 import io.helidon.service.inject.api.Scopes;
 
 import org.junit.jupiter.api.Test;
-import org.junitpioneer.jupiter.ExpectedToFail;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -33,7 +32,6 @@ class InjectExampleTest {
     }
 
     @Test
-    @ExpectedToFail
     void testInterceptor() {
         var registryManager = InjectRegistryManager.create();
         var registry = registryManager.registry();
@@ -184,7 +182,6 @@ class InjectExampleTest {
     }
 
     @Test
-    @ExpectedToFail
     void testCovariance() {
         var registry = InjectRegistryManager.create().registry();
         var shelter = registry.get(CovarianceExample.Shelter.class);

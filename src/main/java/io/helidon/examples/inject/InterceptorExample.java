@@ -107,7 +107,6 @@ class InterceptorExample {
      * A service that extends an abstract class contract with an intercepted method.
      */
     @Injection.Singleton
-    @Interception.Delegate
     static class MyAbstractClassContractImpl extends MyAbstractClassContract {
 
         @Override
