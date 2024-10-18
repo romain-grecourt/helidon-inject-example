@@ -48,6 +48,7 @@ class InjectExampleTest {
         assertThat(myAbstractClassContract.sayHello("Juliet"), is("Hello Juliet!"));
         assertThat(myProvidedContract.sayHello("Jennifer"), is("Hello Jennifer!"));
         assertThat(myProvidedContract.sayHello("Josephine"), is("Hello Josephine!"));
+        assertThat(myAbstractClassContract.sayHelloDirect("John"), is("Hello John!"));
         assertThat(InterceptorExample.MyServiceInterceptor.INVOKED, is(List.of(
                 "%s.<init>: []".formatted(InterceptorExample.MyConcreteService.class.getName()),
                 "%s.sayHello: [Joe]".formatted(InterceptorExample.MyConcreteService.class.getName()),
@@ -57,7 +58,8 @@ class InjectExampleTest {
                 "%s.sayHello: [Jessica]".formatted(InterceptorExample.MyAbstractClassContractImpl.class.getName()),
                 "%s.sayHello: [Juliet]".formatted(InterceptorExample.MyAbstractClassContractImpl.class.getName()),
                 "%s.sayHello: [Jennifer]".formatted(InterceptorExample.MyContractProvider.class.getName()),
-                "%s.sayHello: [Josephine]".formatted(InterceptorExample.MyContractProvider.class.getName()))));
+                "%s.sayHello: [Josephine]".formatted(InterceptorExample.MyContractProvider.class.getName()),
+                "%s.sayHelloDirect: [John]".formatted(InterceptorExample.MyAbstractClassContractImpl.class.getName()))));
     }
 
     @Test

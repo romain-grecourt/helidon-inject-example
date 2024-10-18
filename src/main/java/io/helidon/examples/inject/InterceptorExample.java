@@ -44,13 +44,17 @@ class InterceptorExample {
 
         @Traced
         abstract String sayHello(String name);
+
+        @Traced
+        String sayHelloDirect(String name) {
+            return "Hello %s!".formatted(name);
+        }
     }
 
     /**
      * Another contract with an intercepted method.
      */
     @Service.Contract
-    @Interception.Delegate
     interface MyOtherContract {
 
         @Traced
