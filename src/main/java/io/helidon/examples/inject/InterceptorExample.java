@@ -44,13 +44,17 @@ class InterceptorExample {
 
         @Traced
         abstract String sayHello(String name);
+
+        @Traced
+        String sayHelloDirect(String name) {
+            return "Hello %s!".formatted(name);
+        }
     }
 
     /**
      * Another contract with an intercepted method.
      */
     @Service.Contract
-    @Interception.Delegate
     interface MyOtherContract {
 
         @Traced
@@ -107,7 +111,6 @@ class InterceptorExample {
      * A service that extends an abstract class contract with an intercepted method.
      */
     @Injection.Singleton
-    @Interception.Delegate
     static class MyAbstractClassContractImpl extends MyAbstractClassContract {
 
         @Override
