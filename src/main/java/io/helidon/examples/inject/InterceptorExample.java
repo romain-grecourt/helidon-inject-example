@@ -52,6 +52,17 @@ class InterceptorExample {
     }
 
     /**
+     * An abstract class contract with an intercepted method.
+     */
+    @Service.Contract
+    @Interception.Delegate
+    static abstract class MyOtherAbstractClassContract {
+
+        @Traced
+        abstract String sayHello(String name);
+    }
+
+    /**
      * Another contract with an intercepted method.
      */
     @Service.Contract
@@ -130,21 +141,39 @@ class InterceptorExample {
         }
     }
 
+    @Injection.Singleton
+    static class MyAbstractContractProvider implements Supplier<MyOtherAbstractClassContract> {
+
+        @Override
+        public MyOtherAbstractClassContract get() {
+            return new MyOtherAbstractClassContract(){
+
+                @Override
+                String sayHello(String name) {
+                    return "Hello %s!".formatted(name);
+                }
+            };
+        }
+    }
+
     public static void main(String[] args) {
         var registry = InjectRegistryManager.create().registry();
         var myService = registry.get(MyConcreteService.class);
         var myIFaceContract = registry.get(MyContract.class);
-        var myIFaceDelegatedContract = registry.get(MyAbstractClassContract.class);
+        var myAbstractClassContract = registry.get(MyAbstractClassContract.class);
         var myIFaceProvidedContract = registry.get(MyOtherContract.class);
+        var myAbstractClassProvidedContract = registry.get(MyOtherAbstractClassContract.class);
 
         System.out.println(myService.sayHello("Joe"));
         System.out.println(myService.sayHello("Jack"));
         System.out.println(myIFaceContract.sayHello("Julia"));
         System.out.println(myIFaceContract.sayHello("Jeanne"));
-        System.out.println(myIFaceDelegatedContract.sayHello("Jessica"));
-        System.out.println(myIFaceDelegatedContract.sayHello("Juliet"));
+        System.out.println(myAbstractClassContract.sayHello("Jessica"));
+        System.out.println(myAbstractClassContract.sayHello("Juliet"));
         System.out.println(myIFaceProvidedContract.sayHello("Jennifer"));
         System.out.println(myIFaceProvidedContract.sayHello("Josephine"));
+        System.out.println(myAbstractClassProvidedContract.sayHello("Joceline"));
+        System.out.println(myAbstractClassProvidedContract.sayHello("Jacqueline"));
         MyServiceInterceptor.INVOKED.forEach(System.out::println);
     }
 }

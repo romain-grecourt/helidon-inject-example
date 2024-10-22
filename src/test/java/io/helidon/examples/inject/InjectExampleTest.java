@@ -39,6 +39,7 @@ class InjectExampleTest {
         var myContract = registry.get(InterceptorExample.MyContract.class);
         var myAbstractClassContract = registry.get(InterceptorExample.MyAbstractClassContract.class);
         var myProvidedContract = registry.get(InterceptorExample.MyOtherContract.class);
+        var myAbstractClassProvidedContract = registry.get(InterceptorExample.MyOtherAbstractClassContract.class);
 
         assertThat(myConcreteService.sayHello("Joe"), is("Hello Joe!"));
         assertThat(myConcreteService.sayHello("John"), is("Hello John!"));
@@ -49,6 +50,8 @@ class InjectExampleTest {
         assertThat(myProvidedContract.sayHello("Jennifer"), is("Hello Jennifer!"));
         assertThat(myProvidedContract.sayHello("Josephine"), is("Hello Josephine!"));
         assertThat(myAbstractClassContract.sayHelloDirect("John"), is("Hello John!"));
+        assertThat(myAbstractClassProvidedContract.sayHello("Joceline"), is("Hello Joceline!"));
+        assertThat(myAbstractClassProvidedContract.sayHello("Jacqueline"), is("Hello Jacqueline!"));
         assertThat(InterceptorExample.MyServiceInterceptor.INVOKED, is(List.of(
                 "%s.<init>: []".formatted(InterceptorExample.MyConcreteService.class.getName()),
                 "%s.sayHello: [Joe]".formatted(InterceptorExample.MyConcreteService.class.getName()),
@@ -59,7 +62,9 @@ class InjectExampleTest {
                 "%s.sayHello: [Juliet]".formatted(InterceptorExample.MyAbstractClassContractImpl.class.getName()),
                 "%s.sayHello: [Jennifer]".formatted(InterceptorExample.MyContractProvider.class.getName()),
                 "%s.sayHello: [Josephine]".formatted(InterceptorExample.MyContractProvider.class.getName()),
-                "%s.sayHelloDirect: [John]".formatted(InterceptorExample.MyAbstractClassContractImpl.class.getName()))));
+                "%s.sayHelloDirect: [John]".formatted(InterceptorExample.MyAbstractClassContractImpl.class.getName()),
+                "%s.sayHello: [Joceline]".formatted(InterceptorExample.MyAbstractContractProvider.class.getName()),
+                "%s.sayHello: [Jacqueline]".formatted(InterceptorExample.MyAbstractContractProvider.class.getName()))));
     }
 
     @Test
