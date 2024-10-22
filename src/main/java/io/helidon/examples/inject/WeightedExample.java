@@ -3,7 +3,6 @@ package io.helidon.examples.inject;
 import io.helidon.common.Weight;
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
-import io.helidon.service.registry.Service;
 
 /**
  * An example that illustrates usages of {@link Weight} to order services.
@@ -13,7 +12,6 @@ class WeightedExample {
     /**
      * A contract to be implemented by weighted services.
      */
-    @Service.Contract
     interface Color {
         String name();
     }

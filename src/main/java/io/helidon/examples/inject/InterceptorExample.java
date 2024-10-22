@@ -11,7 +11,6 @@ import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
 import io.helidon.service.inject.api.Interception;
 import io.helidon.service.inject.api.InterceptionContext;
-import io.helidon.service.registry.Service;
 
 /**
  * An example that illustrates usages of {@link Interception.Interceptor}.
@@ -29,7 +28,6 @@ class InterceptorExample {
     /**
      * A contract with an intercepted method.
      */
-    @Service.Contract
     interface MyContract {
 
         @Traced
@@ -39,7 +37,6 @@ class InterceptorExample {
     /**
      * An abstract class contract with an intercepted method.
      */
-    @Service.Contract
     static abstract class MyAbstractClassContract {
 
         @Traced
@@ -52,9 +49,8 @@ class InterceptorExample {
     }
 
     /**
-     * An abstract class contract with an intercepted method.
+     * A delegate-able abstract class contract with an intercepted method.
      */
-    @Service.Contract
     @Interception.Delegate
     static abstract class MyOtherAbstractClassContract {
 
@@ -65,7 +61,6 @@ class InterceptorExample {
     /**
      * Another contract with an intercepted method.
      */
-    @Service.Contract
     interface MyOtherContract {
 
         @Traced
@@ -141,6 +136,9 @@ class InterceptorExample {
         }
     }
 
+    /**
+     * A provider of an intercepted abstract contract.
+     */
     @Injection.Singleton
     static class MyAbstractContractProvider implements Supplier<MyOtherAbstractClassContract> {
 

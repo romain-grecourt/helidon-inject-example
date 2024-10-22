@@ -2,7 +2,6 @@ package io.helidon.examples.inject;
 
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
-import io.helidon.service.registry.Service;
 
 /**
  * An example that illustrates usages of {@link Injection.Qualifier}.
@@ -12,7 +11,6 @@ class CustomQualifierExample {
     /**
      * A service to be implemented by qualified services.
      */
-    @Service.Contract
     interface Color {
         String name();
     }

@@ -4,13 +4,11 @@ import java.util.List;
 
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
-import io.helidon.service.registry.Service;
 
 /**
  * An example that demonstrates covariant lookups.
  */
 class CovarianceExample {
-    @Service.Contract
     sealed interface Pet permits Cat, Dog {
 
         default String name() {
@@ -18,11 +16,9 @@ class CovarianceExample {
         }
     }
 
-    @Service.Contract
     sealed interface Cat extends Pet permits Siamese, Bengal {
     }
 
-    @Service.Contract
     sealed interface Dog extends Pet permits Boxer, Husky {
     }
 

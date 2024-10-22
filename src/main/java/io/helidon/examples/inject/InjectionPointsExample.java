@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
-import io.helidon.service.registry.Service;
 
 /**
  * An example that illustrates usages of {@link Injection.Inject}.
@@ -36,7 +35,6 @@ class InjectionPointsExample {
     /**
      * A service to be implemented by all variations.
      */
-    @Service.Contract
     interface Greeting {
 
         Greeter greeter();

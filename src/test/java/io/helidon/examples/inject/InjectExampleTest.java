@@ -202,4 +202,27 @@ class InjectExampleTest {
         var dogs = shelter.dogs().stream().map(CovarianceExample.Dog::name).toList();
         assertThat(dogs, is(List.of("Boxer", "Husky")));
     }
+
+    @Test
+    void testEvents() {
+        var registry = InjectRegistryManager.create().registry();
+        var myEmitter = registry.get(EventsExample.MyEmitter.class);
+        var myObserver = registry.get(EventsExample.MyObserver.class);
+        var myIdEmitter = registry.get(EventsExample.MyIdEmitter.class);
+        var myIdObserver = registry.get(EventsExample.MyIdObserver.class);
+        var myNameEmitter = registry.get(EventsExample.MyNameEmitter.class);
+        var myNameObserver = registry.get(EventsExample.MyNameObserver.class);
+
+        myEmitter.emit("foo");
+        myEmitter.emit("bar");
+        assertThat(myObserver.messages, is(List.of("foo", "bar")));
+
+        myIdEmitter.emit("123");
+        myIdEmitter.emit("456");
+        assertThat(myIdObserver.ids, is(List.of("123", "456")));
+
+        myNameEmitter.emit("Jack");
+        myNameEmitter.emit("Jill");
+        assertThat(myNameObserver.names, is(List.of("Jack", "Jill")));
+    }
 }

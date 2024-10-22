@@ -2,7 +2,6 @@ package io.helidon.examples.inject;
 
 import io.helidon.service.inject.InjectRegistryManager;
 import io.helidon.service.inject.api.Injection;
-import io.helidon.service.registry.Service;
 
 /**
  * An example that illustrates usages of {@link Injection.Named}.
@@ -12,7 +11,6 @@ class NamedExample {
     /**
      * A service to be implemented by named services.
      */
-    @Service.Contract
     interface Color {
         String hexCode();
     }
