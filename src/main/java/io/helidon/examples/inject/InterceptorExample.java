@@ -7,10 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
-import io.helidon.service.inject.api.Interception;
-import io.helidon.service.inject.api.InterceptionContext;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
+import io.helidon.service.registry.Interception;
+import io.helidon.service.registry.InterceptionContext;
 
 /**
  * An example that illustrates usages of {@link Interception.Interceptor}.
@@ -37,6 +37,7 @@ class InterceptorExample {
     /**
      * An abstract class contract with an intercepted method.
      */
+    @Service.Contract
     static abstract class MyAbstractClassContract {
 
         @Traced
@@ -70,8 +71,8 @@ class InterceptorExample {
     /**
      * An interceptor implementation that supports {@link Traced}.
      */
-    @Injection.Singleton
-    @Injection.NamedByType(Traced.class)
+    @Service.Singleton
+    @Service.NamedByType(Traced.class)
     static class MyServiceInterceptor implements Interception.Interceptor {
         static final List<String> INVOKED = new ArrayList<>();
 
@@ -88,7 +89,7 @@ class InterceptorExample {
     /**
      * A singleton service with an intercepted constructor and an intercepted method.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class MyConcreteService {
 
         @Traced
@@ -104,7 +105,7 @@ class InterceptorExample {
     /**
      * A service that implements a contract with intercepted methods.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class MyContractImpl implements MyContract {
 
         @Override
@@ -116,7 +117,7 @@ class InterceptorExample {
     /**
      * A service that extends an abstract class contract with an intercepted method.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class MyAbstractClassContractImpl extends MyAbstractClassContract {
 
         @Override
@@ -128,7 +129,7 @@ class InterceptorExample {
     /**
      * A service that implements a provider of a contract with an intercepted method.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class MyContractProvider implements Supplier<MyOtherContract> {
         @Override
         public MyOtherContract get() {
@@ -139,7 +140,7 @@ class InterceptorExample {
     /**
      * A provider of an intercepted abstract contract.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class MyAbstractContractProvider implements Supplier<MyOtherAbstractClassContract> {
 
         @Override
@@ -155,7 +156,7 @@ class InterceptorExample {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myService = registry.get(MyConcreteService.class);
         var myIFaceContract = registry.get(MyContract.class);
         var myAbstractClassContract = registry.get(MyAbstractClassContract.class);

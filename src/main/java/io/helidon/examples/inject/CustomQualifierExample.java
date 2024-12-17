@@ -1,10 +1,10 @@
 package io.helidon.examples.inject;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
- * An example that illustrates usages of {@link Injection.Qualifier}.
+ * An example that illustrates usages of {@link Service.Qualifier}.
  */
 class CustomQualifierExample {
 
@@ -18,7 +18,7 @@ class CustomQualifierExample {
     /**
      * A custom qualifier annotation.
      */
-    @Injection.Qualifier
+    @Service.Qualifier
     public @interface HexCode {
         String value();
     }
@@ -27,7 +27,7 @@ class CustomQualifierExample {
      * A qualified service.
      */
     @HexCode("0000FF")
-    @Injection.Singleton
+    @Service.Singleton
     static class Blue implements Color {
 
         @Override
@@ -40,7 +40,7 @@ class CustomQualifierExample {
      * A qualified service.
      */
     @HexCode("008000")
-    @Injection.Singleton
+    @Service.Singleton
     static class Green implements Color {
 
         @Override
@@ -54,7 +54,7 @@ class CustomQualifierExample {
      *
      * @param color color
      */
-    @Injection.Singleton
+    @Service.Singleton
     record BlueCircle(@HexCode("0000FF") Color color) {
     }
 
@@ -63,12 +63,12 @@ class CustomQualifierExample {
      *
      * @param color color
      */
-    @Injection.Singleton
+    @Service.Singleton
     record GreenCircle(@HexCode("008000") Color color) {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var blueCircle = registry.get(BlueCircle.class);
         var greenCircle = registry.get(GreenCircle.class);
 

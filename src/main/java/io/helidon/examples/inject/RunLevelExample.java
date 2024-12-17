@@ -4,15 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.InjectRegistry;
-import io.helidon.service.inject.api.InjectServiceInfo;
-import io.helidon.service.inject.api.Injection;
-import io.helidon.service.inject.api.Lookup;
+import io.helidon.service.registry.Lookup;
 import io.helidon.service.registry.Service;
+import io.helidon.service.registry.ServiceInfo;
+import io.helidon.service.registry.ServiceRegistry;
+import io.helidon.service.registry.ServiceRegistryManager;
 
 /**
- * A example that illustrates {@link Injection.RunLevel}
+ * A example that illustrates {@link Service.RunLevel}
  */
 class RunLevelExample {
 
@@ -21,8 +20,8 @@ class RunLevelExample {
     /**
      * A service that starts at level {@code 1}.
      */
-    @Injection.RunLevel(1)
-    @Injection.Singleton
+    @Service.RunLevel(1)
+    @Service.Singleton
     static class Level1 {
 
         @Service.PostConstruct
@@ -34,8 +33,8 @@ class RunLevelExample {
     /**
      * A service that starts at level {@code 2}.
      */
-    @Injection.RunLevel(2)
-    @Injection.Singleton
+    @Service.RunLevel(2)
+    @Service.Singleton
     static class Level2 {
 
         @Service.PostConstruct
@@ -49,7 +48,7 @@ class RunLevelExample {
      *
      * @param registry registry
      */
-    static void startRunLevels(InjectRegistry registry) {
+    static void startRunLevels(ServiceRegistry registry) {
         for (var runLevel : runLevels(registry)) {
             if (runLevel <= 2) {
                 registry.all(Lookup.builder()
@@ -65,10 +64,10 @@ class RunLevelExample {
      * @param registry registry
      * @return run levels
      */
-    static List<Double> runLevels(InjectRegistry registry) {
+    static List<Double> runLevels(ServiceRegistry registry) {
         return registry.lookupServices(Lookup.EMPTY)
                 .stream()
-                .map(InjectServiceInfo::runLevel)
+                .map(ServiceInfo::runLevel)
                 .flatMap(Optional::stream)
                 .distinct()
                 .sorted()
@@ -76,7 +75,7 @@ class RunLevelExample {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         startRunLevels(registry);
         STARTUP_EVENTS.forEach(System.out::println);
     }

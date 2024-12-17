@@ -6,18 +6,18 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
- * An example that illustrates usages of {@link Injection.Inject}.
+ * An example that illustrates usages of {@link Service.Inject}.
  */
 class InjectionPointsExample {
 
     /**
      * A service to be injected.
      */
-    @Injection.PerLookup
+    @Service.PerLookup
     static class Greeter {
 
         Function<String, String> filter = Function.identity();
@@ -45,10 +45,10 @@ class InjectionPointsExample {
     }
 
     /**
-     * A service that uses constructor injection.
-     * There is only one constructor, thus {@link Injection.Inject} is optional.
+     * A service that uses constructor Service.
+     * There is only one constructor, thus {@link Service.Inject} is optional.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class GreetingWithImplicitCtorInjection implements Greeting {
 
         private final Greeter greeter;
@@ -65,14 +65,14 @@ class InjectionPointsExample {
 
     /**
      * A service that uses constructor injection and that has multiple constructors.
-     * {@link Injection.Inject} is required.
+     * {@link Service.Inject} is required.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class GreetingWithExplicitCtorInjection implements Greeting {
 
         private final Greeter greeter;
 
-        @Injection.Inject
+        @Service.Inject
         GreetingWithExplicitCtorInjection(Greeter greeter) {
             this.greeter = greeter;
         }
@@ -89,13 +89,13 @@ class InjectionPointsExample {
     }
 
     /**
-     * A service that uses field injection.
+     * A service that uses field Service.
      * The visibility of the field must be at minimum package private.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class GreetingWithFieldInjection implements Greeting {
 
-        @Injection.Inject
+        @Service.Inject
         protected Greeter greeter;
 
         @Override
@@ -105,15 +105,15 @@ class InjectionPointsExample {
     }
 
     /**
-     * A service that uses method injection.
+     * A service that uses method Service.
      * The visibility of the method must be at minimum package private.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class GreetingWithMethodInjection implements Greeting {
 
         private Greeter greeter;
 
-        @Injection.Inject
+        @Service.Inject
         void setGreeter(Greeter greeter) {
             this.greeter = greeter;
         }
@@ -125,31 +125,31 @@ class InjectionPointsExample {
     }
 
     /**
-     * A service that extends a base class with field injection.
+     * A service that extends a base class with field Service.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class GreetingWithInheritedFieldInjection extends GreetingWithFieldInjection {
     }
 
     /**
-     * A service as a record with constructor injection.
+     * A service as a record with constructor Service.
      *
      * @param greeter greeter
      */
-    @Injection.Singleton
+    @Service.Singleton
     record GreetingWithRecord(Greeter greeter) implements Greeting {
     }
 
     /**
      * A service as a record with a compact constructor.
-     * {@link Injection.Inject} is optional.
+     * {@link Service.Inject} is optional.
      *
      * @param greeter greeter
      */
-    @Injection.Singleton
+    @Service.Singleton
     record GreetingWithRecordCompactCtor(Greeter greeter) implements Greeting {
 
-        @Injection.Inject
+        @Service.Inject
         GreetingWithRecordCompactCtor {
         }
     }
@@ -160,10 +160,10 @@ class InjectionPointsExample {
      *
      * @param greeter greeter
      */
-    @Injection.Singleton
+    @Service.Singleton
     record GreetingWithRecordCanonicalCtor(Greeter greeter) implements Greeting {
 
-        @Injection.Inject
+        @Service.Inject
         GreetingWithRecordCanonicalCtor(Greeter greeter) {
             this.greeter = greeter.filter(String::toUpperCase);
         }
@@ -171,15 +171,15 @@ class InjectionPointsExample {
 
     /**
      * A service as a record with a custom constructor.
-     * {@link Injection.Inject} is required.
+     * {@link Service.Inject} is required.
      *
      * @param greeter greeter
      * @param suffix  a suffix to illustrate the need for a custom constructor
      */
-    @Injection.Singleton
+    @Service.Singleton
     record GreetingWithRecordCustomCtor(Greeter greeter, String suffix) implements Greeting {
 
-        @Injection.Inject
+        @Service.Inject
         GreetingWithRecordCustomCtor(Greeter greeter) {
             this(greeter, "!!");
         }
@@ -196,8 +196,8 @@ class InjectionPointsExample {
      *
      * @param optionalGreeter optional greeter
      */
-    @Injection.Singleton
-    record GreetingWithOptionalIP(@Injection.Named("non-existing") Optional<Greeter> optionalGreeter) implements Greeting {
+    @Service.Singleton
+    record GreetingWithOptionalIP(@Service.Named("non-existing") Optional<Greeter> optionalGreeter) implements Greeting {
 
         @Override
         public Greeter greeter() {
@@ -210,7 +210,7 @@ class InjectionPointsExample {
      *
      * @param greetings all the resolved greetings
      */
-    @Injection.Singleton
+    @Service.Singleton
     record Greetings(List<Greeting> greetings) {
 
         public static final List<String> NAMES = List.of(
@@ -236,7 +236,7 @@ class InjectionPointsExample {
      *
      * @param dependency dependency
      */
-    @Injection.Singleton
+    @Service.Singleton
     record GreetingWithCyclicDep1(Supplier<GreetingWithCyclicDep2> dependency) implements Greeting {
 
         @Override
@@ -251,7 +251,7 @@ class InjectionPointsExample {
      * @param dependency dependency
      * @param greeter    greeter
      */
-    @Injection.Singleton
+    @Service.Singleton
     record GreetingWithCyclicDep2(GreetingWithCyclicDep1 dependency, Greeter greeter) implements Greeting {
 
         @Override
@@ -261,7 +261,7 @@ class InjectionPointsExample {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var greetings = registry.get(Greetings.class);
 
         greetings.greet().forEach(System.out::println);

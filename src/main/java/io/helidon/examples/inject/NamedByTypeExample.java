@@ -1,10 +1,10 @@
 package io.helidon.examples.inject;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
- * An example that illustrates usages of {@link Injection.NamedByType}.
+ * An example that illustrates usages of {@link Service.NamedByType}.
  */
 class NamedByTypeExample {
 
@@ -18,8 +18,8 @@ class NamedByTypeExample {
     /**
      * A named service.
      */
-    @Injection.NamedByType(Blue.class)
-    @Injection.Singleton
+    @Service.NamedByType(Blue.class)
+    @Service.Singleton
     static class Blue implements Color {
 
         @Override
@@ -31,8 +31,8 @@ class NamedByTypeExample {
     /**
      * A named service.
      */
-    @Injection.NamedByType(Green.class)
-    @Injection.Singleton
+    @Service.NamedByType(Green.class)
+    @Service.Singleton
     static class Green implements Color {
 
         @Override
@@ -42,25 +42,25 @@ class NamedByTypeExample {
     }
 
     /**
-     * A service that qualifies the injection point using {@link Injection.NamedByType}.
+     * A service that qualifies the injection point using {@link Service.NamedByType}.
      *
      * @param color color
      */
-    @Injection.Singleton
-    record BlueSquare(@Injection.NamedByType(Blue.class) Color color) {
+    @Service.Singleton
+    record BlueSquare(@Service.NamedByType(Blue.class) Color color) {
     }
 
     /**
-     * A service that qualifies the injection point using {@link Injection.NamedByType}.
+     * A service that qualifies the injection point using {@link Service.NamedByType}.
      *
      * @param color color
      */
-    @Injection.Singleton
-    record GreenSquare(@Injection.NamedByType(Green.class) Color color) {
+    @Service.Singleton
+    record GreenSquare(@Service.NamedByType(Green.class) Color color) {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var blueCircle = registry.get(BlueSquare.class);
         var greenCircle = registry.get(GreenSquare.class);
 

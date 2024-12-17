@@ -1,10 +1,10 @@
 package io.helidon.examples.inject;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
- * An example that illustrates usages of {@link Injection.PerInstance}.
+ * An example that illustrates usages of {@link Service.PerInstance}.
  */
 class PerInstanceExample {
 
@@ -18,8 +18,8 @@ class PerInstanceExample {
     /**
      * A named service.
      */
-    @Injection.Named("blue")
-    @Injection.Singleton
+    @Service.Named("blue")
+    @Service.Singleton
     static class Blue implements Color {
 
         @Override
@@ -31,8 +31,8 @@ class PerInstanceExample {
     /**
      * A named service.
      */
-    @Injection.Named("green")
-    @Injection.Singleton
+    @Service.Named("green")
+    @Service.Singleton
     static class Green implements Color {
 
         @Override
@@ -47,8 +47,8 @@ class PerInstanceExample {
      * @param name  the matched name
      * @param color the matched color
      */
-    @Injection.PerInstance(Color.class)
-    record Circle(@Injection.InstanceName String name, Color color) {
+    @Service.PerInstance(Color.class)
+    record Circle(@Service.InstanceName String name, Color color) {
     }
 
     /**
@@ -57,13 +57,13 @@ class PerInstanceExample {
      * @param blue  blue circle
      * @param green green circle
      */
-    @Injection.Singleton
-    record Circles(@Injection.Named("blue") Circle blue,
-                   @Injection.Named("green") Circle green) {
+    @Service.Singleton
+    record Circles(@Service.Named("blue") Circle blue,
+                   @Service.Named("green") Circle green) {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
 
         var circles = registry.get(Circles.class);
 

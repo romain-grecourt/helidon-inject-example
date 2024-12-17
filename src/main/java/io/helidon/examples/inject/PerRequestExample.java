@@ -3,20 +3,20 @@ package io.helidon.examples.inject;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
-import io.helidon.service.inject.api.Scope;
-import io.helidon.service.inject.api.Scopes;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
+import io.helidon.service.registry.Scope;
+import io.helidon.service.registry.Scopes;
 
 /**
- * An example that illustrates usages of {@link Injection.PerRequest}.
+ * An example that illustrates usages of {@link Service.PerRequest}.
  */
 class PerRequestExample {
 
     /**
      * A service in request scope.
      */
-    @Injection.PerRequest
+    @Service.PerRequest
     static class MyRequestScopeService {
 
         String sayHello() {
@@ -29,16 +29,16 @@ class PerRequestExample {
      *
      * @param contract request scope supplier
      */
-    @Injection.Singleton
+    @Service.Singleton
     record MyService(Supplier<MyRequestScopeService> contract) {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myService = registry.get(MyService.class);
         var scopes = registry.get(Scopes.class);
 
-        try (Scope ignored = scopes.createScope(Injection.PerRequest.TYPE, "test-1", Map.of())) {
+        try (Scope ignored = scopes.createScope(Service.PerRequest.TYPE, "test-1", Map.of())) {
             System.out.println(myService.contract().get().sayHello());
         }
     }

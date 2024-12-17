@@ -6,30 +6,30 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import io.helidon.common.types.TypeName;
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
-import io.helidon.service.inject.api.Scope;
-import io.helidon.service.inject.api.Scopes;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
+import io.helidon.service.registry.Scope;
+import io.helidon.service.registry.Scopes;
 
 /**
- * An example that illustrates usages of {@link Injection.Scope}.
+ * An example that illustrates usages of {@link Service.Scope}.
  */
 class CustomScopeExample {
 
     /**
      * A custom scope annotation.
      */
-    @Injection.Scope
+    @Service.Scope
     public @interface MyScope {
         TypeName TYPE = TypeName.create(MyScope.class);
     }
 
     /**
-     * A service that implements {@link Injection.ScopeHandler} to support {@link MyScope}.
+     * A service that implements {@link Service.ScopeHandler} to support {@link MyScope}.
      */
-    @Injection.Singleton
-    @Injection.NamedByType(MyScope.class)
-    static class MyScopeControl implements Injection.ScopeHandler {
+    @Service.Singleton
+    @Service.NamedByType(MyScope.class)
+    static class MyScopeControl implements Service.ScopeHandler {
 
         private final AtomicReference<Scope> currentScope = new AtomicReference<>();
 
@@ -71,12 +71,12 @@ class CustomScopeExample {
      *
      * @param contract contract supplier
      */
-    @Injection.Singleton
+    @Service.Singleton
     record MyService(Supplier<MyScopedService> contract) {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myService = registry.get(MyService.class);
 
         var scopes = registry.get(Scopes.class);

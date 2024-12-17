@@ -2,18 +2,18 @@ package io.helidon.examples.inject;
 
 import java.util.function.Supplier;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
- * An example that illustrates usages of {@link Injection.PerLookup} without scope.
+ * An example that illustrates usages of {@link Service.PerLookup} without scope.
  */
 class PerLookupExample {
 
     /**
      * A service with the per-lookup scope.
      */
-    @Injection.PerLookup
+    @Service.PerLookup
     static class MyInstance {
     }
 
@@ -22,12 +22,12 @@ class PerLookupExample {
      *
      * @param instance supplier of the service
      */
-    @Injection.Singleton
+    @Service.Singleton
     record MySingleton(Supplier<MyInstance> instance) {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myInstance1 = registry.get(MyInstance.class);
         var myInstance2 = registry.get(MyInstance.class);
 

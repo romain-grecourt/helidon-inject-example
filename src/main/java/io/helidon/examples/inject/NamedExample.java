@@ -1,10 +1,10 @@
 package io.helidon.examples.inject;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
- * An example that illustrates usages of {@link Injection.Named}.
+ * An example that illustrates usages of {@link Service.Named}.
  */
 class NamedExample {
 
@@ -18,8 +18,8 @@ class NamedExample {
     /**
      * A named service.
      */
-    @Injection.Named("blue")
-    @Injection.Singleton
+    @Service.Named("blue")
+    @Service.Singleton
     static class Blue implements Color {
 
         @Override
@@ -31,8 +31,8 @@ class NamedExample {
     /**
      * A named service.
      */
-    @Injection.Named("green")
-    @Injection.Singleton
+    @Service.Named("green")
+    @Service.Singleton
     static class Green implements Color {
 
         @Override
@@ -42,25 +42,25 @@ class NamedExample {
     }
 
     /**
-     * A service that qualifies the injection point using {@link Injection.Named}.
+     * A service that qualifies the injection point using {@link Service.Named}.
      *
      * @param color color
      */
-    @Injection.Singleton
-    record BlueCircle(@Injection.Named("blue") Color color) {
+    @Service.Singleton
+    record BlueCircle(@Service.Named("blue") Color color) {
     }
 
     /**
-     * A service that qualifies the injection point using {@link Injection.Named}.
+     * A service that qualifies the injection point using {@link Service.Named}.
      *
      * @param color color
      */
-    @Injection.Singleton
-    record GreenCircle(@Injection.Named("green") Color color) {
+    @Service.Singleton
+    record GreenCircle(@Service.Named("green") Color color) {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var blueCircle = registry.get(BlueCircle.class);
         var greenCircle = registry.get(GreenCircle.class);
 
