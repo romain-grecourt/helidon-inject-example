@@ -3,8 +3,8 @@ package io.helidon.examples.inject;
 import java.util.List;
 import java.util.Random;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 import io.helidon.service.registry.Service;
 
 /**
@@ -15,7 +15,7 @@ class ExternalContractExample {
     /**
      * A service that implements {@link CharSequence} contract.
      */
-    @Injection.PerLookup
+    @Service.PerLookup
     @Service.ExternalContracts(CharSequence.class)
     static class RandomName implements CharSequence {
 
@@ -49,7 +49,7 @@ class ExternalContractExample {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var name = registry.get(CharSequence.class);
         System.out.println(name);
     }

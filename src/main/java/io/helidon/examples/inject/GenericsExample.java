@@ -2,8 +2,8 @@ package io.helidon.examples.inject;
 
 import java.util.List;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
  * An example that demonstrates using generics.
@@ -17,7 +17,7 @@ public class GenericsExample {
         String name();
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     static class Blue implements Color {
         @Override
         public String name() {
@@ -25,7 +25,7 @@ public class GenericsExample {
         }
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     static class Green implements Color {
         @Override
         public String name() {
@@ -41,15 +41,15 @@ public class GenericsExample {
         }
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     record BlueCircle(Blue color) implements Circle<Blue> {
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     record GreenCircle(Green color) implements Circle<Green> {
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     record MyService(Circle<Blue> blueCircle,
                      Circle<Green> greenCircle,
                      List<Circle<Color>> circles) {
@@ -62,7 +62,7 @@ public class GenericsExample {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myService = registry.get(MyService.class);
 
         System.out.println(myService.blueCircle().name());

@@ -1,8 +1,8 @@
 package io.helidon.examples.inject;
 
 import io.helidon.common.Weight;
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
  * An example that illustrates usages of {@link Weight} to order services.
@@ -20,7 +20,7 @@ class WeightedExample {
      * A weighted service.
      */
     @Weight(1)
-    @Injection.Singleton
+    @Service.Singleton
     static class Blue implements Color {
 
         @Override
@@ -33,7 +33,7 @@ class WeightedExample {
      * A weighted service.
      */
     @Weight(2)
-    @Injection.Singleton
+    @Service.Singleton
     static class Green implements Color {
         @Override
         public String name() {
@@ -42,7 +42,7 @@ class WeightedExample {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var color = registry.get(Color.class);
 
         System.out.printf("color name: %s%n", color.name());

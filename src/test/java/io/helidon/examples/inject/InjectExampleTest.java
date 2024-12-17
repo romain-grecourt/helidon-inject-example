@@ -3,11 +3,11 @@ package io.helidon.examples.inject;
 import java.util.List;
 import java.util.Map;
 
-import io.helidon.service.inject.InjectConfig;
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
-import io.helidon.service.inject.api.Scope;
-import io.helidon.service.inject.api.Scopes;
+import io.helidon.service.registry.ServiceRegistryConfig;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
+import io.helidon.service.registry.Scope;
+import io.helidon.service.registry.Scopes;
 
 import org.junit.jupiter.api.Test;
 
@@ -22,10 +22,10 @@ class InjectExampleTest {
 
     @Test
     void testDescribe() {
-        var injectConfig = InjectConfig.builder()
+        var injectConfig = ServiceRegistryConfig.builder()
                 .putContractInstance(DescribeExample.MyContract.class, new DescribeExample.MyContractImpl())
                 .build();
-        var registry = InjectRegistryManager.create(injectConfig).registry();
+        var registry = ServiceRegistryManager.create(injectConfig).registry();
 
         var myContract = registry.get(DescribeExample.MyContract.class);
         assertThat(myContract.sayHello(), is("Hello World!"));
@@ -33,7 +33,7 @@ class InjectExampleTest {
 
     @Test
     void testInterceptor() {
-        var registryManager = InjectRegistryManager.create();
+        var registryManager = ServiceRegistryManager.create();
         var registry = registryManager.registry();
         var myConcreteService = registry.get(InterceptorExample.MyConcreteService.class);
         var myContract = registry.get(InterceptorExample.MyContract.class);
@@ -69,7 +69,7 @@ class InjectExampleTest {
 
     @Test
     void testNamedByType() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var blueCircle = registry.get(NamedByTypeExample.BlueSquare.class);
         var greenCircle = registry.get(NamedByTypeExample.GreenSquare.class);
 
@@ -79,7 +79,7 @@ class InjectExampleTest {
 
     @Test
     void testNamed() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var blueCircle = registry.get(NamedExample.BlueCircle.class);
         var greenCircle = registry.get(NamedExample.GreenCircle.class);
 
@@ -89,7 +89,7 @@ class InjectExampleTest {
 
     @Test
     void testWeighted() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var color = registry.get(WeightedExample.Color.class);
 
         assertThat(color.name(), is("green"));
@@ -97,7 +97,7 @@ class InjectExampleTest {
 
     @Test
     void testPerInstance() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var circles = registry.get(PerInstanceExample.Circles.class);
 
         assertThat(circles.blue().name(), is("blue"));
@@ -108,7 +108,7 @@ class InjectExampleTest {
 
     @Test
     void testPerLookup() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myInstance1 = registry.get(PerLookupExample.MyInstance.class);
         var myInstance2 = registry.get(PerLookupExample.MyInstance.class);
         var mySingleton = registry.get(PerLookupExample.MySingleton.class);
@@ -122,18 +122,18 @@ class InjectExampleTest {
 
     @Test
     void testRequestScope() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myService = registry.get(PerRequestExample.MyService.class);
         var scopes = registry.get(Scopes.class);
 
-        try (Scope ignored = scopes.createScope(Injection.PerRequest.TYPE, "test-1", Map.of())) {
+        try (Scope ignored = scopes.createScope(Service.PerRequest.TYPE, "test-1", Map.of())) {
             assertThat(myService.contract().get().sayHello(), is("Hello World!"));
         }
     }
 
     @Test
     void testCustomScope() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myService = registry.get(CustomScopeExample.MyService.class);
         var scopes = registry.get(Scopes.class);
 
@@ -144,7 +144,7 @@ class InjectExampleTest {
 
     @Test
     void testInjectionPoints() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var greetings = registry.get(InjectionPointsExample.Greetings.class);
 
         assertThat(greetings.greet(), containsInAnyOrder(
@@ -166,21 +166,21 @@ class InjectExampleTest {
 
     @Test
     void testExternalContract() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var name = registry.get(CharSequence.class);
         assertThat(ExternalContractExample.RandomName.NAMES, hasItem(name.toString()));
     }
 
     @Test
     void testRunLevel() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         RunLevelExample.startRunLevels(registry);
         assertThat(RunLevelExample.STARTUP_EVENTS, hasItems("level1", "level2"));
     }
 
     @Test
     void testGenerics() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myService = registry.get(GenericsExample.MyService.class);
 
         assertThat(myService.blueCircle().name(), is("blue circle"));
@@ -190,7 +190,7 @@ class InjectExampleTest {
 
     @Test
     void testCovariance() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var shelter = registry.get(CovarianceExample.Shelter.class);
 
         var all = shelter.all().stream().map(CovarianceExample.Pet::name).toList();
@@ -205,7 +205,7 @@ class InjectExampleTest {
 
     @Test
     void testEvents() {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myEmitter = registry.get(EventsExample.MyEmitter.class);
         var myObserver = registry.get(EventsExample.MyObserver.class);
         var myIdEmitter = registry.get(EventsExample.MyIdEmitter.class);

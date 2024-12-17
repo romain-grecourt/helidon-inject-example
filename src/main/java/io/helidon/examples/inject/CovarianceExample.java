@@ -2,8 +2,8 @@ package io.helidon.examples.inject;
 
 import java.util.List;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Service;
 
 /**
  * An example that demonstrates covariant lookups.
@@ -22,28 +22,28 @@ class CovarianceExample {
     sealed interface Dog extends Pet permits Boxer, Husky {
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     record Siamese() implements Cat {
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     record Bengal() implements Cat {
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     record Boxer() implements Dog {
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     record Husky() implements Dog {
     }
 
-    @Injection.Singleton
+    @Service.Singleton
     record Shelter(List<Pet> all, List<Cat> cats, List<Dog> dogs) {
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var shelter = registry.get(Shelter.class);
 
         System.out.println("All pets:");

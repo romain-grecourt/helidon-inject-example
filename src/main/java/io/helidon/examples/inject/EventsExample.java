@@ -3,9 +3,9 @@ package io.helidon.examples.inject;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.helidon.service.inject.InjectRegistryManager;
-import io.helidon.service.inject.api.Event;
-import io.helidon.service.inject.api.Injection;
+import io.helidon.service.registry.ServiceRegistryManager;
+import io.helidon.service.registry.Event;
+import io.helidon.service.registry.Service;
 
 /**
  * An example that illustrates usages of {@link Event}.
@@ -23,7 +23,7 @@ class EventsExample {
      * A service that emits {@link MyEvent}.
      * @param emitter emitter
      */
-    @Injection.Singleton
+    @Service.Singleton
     record MyEmitter(Event.Emitter<MyEvent> emitter) {
 
         void emit(String msg) {
@@ -34,7 +34,7 @@ class EventsExample {
     /**
      * A service that observes {@link MyEvent}.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class MyObserver {
 
         final List<String> messages = new ArrayList<>();
@@ -50,8 +50,8 @@ class EventsExample {
      *
      * @param emitter emitter
      */
-    @Injection.Singleton
-    record MyIdEmitter(@Injection.Named("id") Event.Emitter<String> emitter) {
+    @Service.Singleton
+    record MyIdEmitter(@Service.Named("id") Event.Emitter<String> emitter) {
 
         void emit(String msg) {
             emitter.emit(msg);
@@ -61,13 +61,13 @@ class EventsExample {
     /**
      * A service that observes string events named {@code id}.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class MyIdObserver {
 
         final List<String> ids = new ArrayList<>();
 
         @Event.Observer
-        @Injection.Named("id")
+        @Service.Named("id")
         void event(String id) {
             ids.add(id);
         }
@@ -78,8 +78,8 @@ class EventsExample {
      *
      * @param emitter emitter
      */
-    @Injection.Singleton
-    record MyNameEmitter(@Injection.Named("name") Event.Emitter<String> emitter) {
+    @Service.Singleton
+    record MyNameEmitter(@Service.Named("name") Event.Emitter<String> emitter) {
 
         void emit(String msg) {
             emitter.emit(msg);
@@ -89,20 +89,20 @@ class EventsExample {
     /**
      * A service that observes string events named {@code name}.
      */
-    @Injection.Singleton
+    @Service.Singleton
     static class MyNameObserver {
 
         final List<String> names = new ArrayList<>();
 
         @Event.Observer
-        @Injection.Named("name")
+        @Service.Named("name")
         void event(String name) {
             names.add(name);
         }
     }
 
     public static void main(String[] args) {
-        var registry = InjectRegistryManager.create().registry();
+        var registry = ServiceRegistryManager.create().registry();
         var myEmitter = registry.get(MyEmitter.class);
         var myObserver = registry.get(MyObserver.class);
         var myIdEmitter = registry.get(MyIdEmitter.class);
